@@ -1,0 +1,69 @@
+order_id,customer_name,email,order_date,quantity,discount_code,total_amount,status
+1004,  Chloe Garcia ,lucas.chen.at.example.com,1742083200,2, WELCOME5,$70.84,CANCELLED
+1040,ARJUN LEE,arjun.lee@example.com,1740096000,3,,$295.29,shipped
+1042,Oscar Wilson,oscar.wilson@example.com,1736208000,2,,39.15,N/A
+1023,amelia kim,amelia.kim@example.com,1742428800,5,SPRING10,, SHIPPED
+1043,henry garcia,henry.garcia@example.com,1739404800, 6,,940.49, SHIPPED
+1022,emma lee,emma.lee@example.com,1741651200,6, WELCOME5,$106.67,CANCELLED
+1015,  Mei Garcia ,mei.garcia@example.com,1737676800,-2,FREESHIP,$57.01,CANCELLED
+1046,Sofia Singh,sofia.singh@example.com,1736812800,4,spring10,$659.56,Canceled
+1036,Arjun  Singh,arjun.singh@example.com,1742774400,4,,420.13,pending
+1017,oscar garcia,oscar.garcia@example.com,1742774400,5,N/A,603.41,PENDING 
+1010,  Ruby Smith ,ruby.smith@example.com,1736726400,5,,273.56,cancelled
+1051,Sofia  O'Brien,sofia.obrien@example.com,1736812800,4,,517.24,CANCELLED
+1027,isla garcia,isla.garcia@example.com,1740960000,4, WELCOME5,598.22,CANCELLED
+1053,Mia Walker,MIA.WALKER@EXAMPLE.COM,1743379200, 3, WELCOME5,461.04,Delivered
+1016,ETHAN O'BRIEN,ethan.obrien@example.com,1736380800,4,,696.27,CANCELLED
+1048,  Olivia Chen ,OLIVIA.CHEN@EXAMPLE.COM,1738627200,1,N/A, 153.7 ,shipped
+1005,Arjun Singh,arjun.singh@example.com,1736812800,4,FREESHIP,$541.05,pending
+1001,ava taylor,ava.taylor@example.com,1742860800,4,FREESHIP,189.12,Shipped
+1039,ETHAN WILSON,ethan.wilson@example.com,1737849600,6,,190.75,Pending
+1010,  Ruby Smith ,ruby.smith@example.com,1736726400,5,,273.56,cancelled
+1011,oscar kim,oscar.kim@example.com,1740873600,1,FREESHIP,30.38,Canceled
+1007,  Oscar Wilson ,oscar.wilson@example.com,1738972800,4,,187.06,Shipped
+1018,LEO MARTIN,leo.martin@example.com,1738022400,5,N/A,$667.11,delivered
+1024,Oscar Walker,OSCAR.WALKER@EXAMPLE.COM,1738627200,2, WELCOME5,204.26,Delivered
+1049,Sofia Singh,sofia.singh@example.com,1741651200,2, WELCOME5,300.88,Shipped
+1056,chloe chen,chloe.chen@example.com,1737676800,2,N/A,164.24,Canceled
+1035,LEO SMITH,LEO.SMITH@EXAMPLE.COM,1737331200,4, WELCOME5,450.33,delivered
+1050,Ava  Smith,ava.smith@example.com,1743120000,1,,$57.86,shipped
+1045,Henry Taylor,N/A,1738627200,6,,$169.38,Pending
+1031,arjun lee,arjun.lee@example.com,1739145600,3,,493.53,PENDING 
+1009,Ava  Lee,AVA.LEE@EXAMPLE.COM,1738454400,2,spring10,131.93,Canceled
+1057,Sofia Brown,sofia.brown@example.com,1742688000,4,spring10,$127.22,delivered
+1037,ZOE O'BRIEN,zoe.obrien@example.com,1742169600,2,FREESHIP,320.46,PENDING 
+1028,Jack Nguyen,jack.nguyen@example.com,1740182400, 4, WELCOME5,306.96,delivered
+1033,Ethan  Wilson,ethan.wilson@example.com,1739232000,2,spring10,31.25,cancelled
+1017,oscar garcia,oscar.garcia@example.com,1742774400,5,FREESHIP,603.41,PENDING 
+1034,Ethan Lee,ethan.lee@example.com,,3,SPRING10,85.51,Canceled
+1054,  Arjun Wilson ,arjun.wilson@example.com,1735948800,5,FREESHIP,298.39,cancelled
+1014,leo o'brien,leo.obrien@example.com,1739923200,1, WELCOME5,14.11,CANCELLED
+1021,Olivia Smith,olivia.smith@example.com,1743120000,1,N/A,49.18,pending
+1048,  Olivia Chen ,OLIVIA.CHEN@EXAMPLE.COM,1738627200,1,, 153.7 ,shipped
+1019,Noah Nguyen,noah.nguyen@example.com,1740700800,two,FREESHIP,426.72,Pending
+1002,  James Nguyen ,JAMES.NGUYEN@EXAMPLE.COM,1735689600,1,,79.57,delivered
+1058,MEI CHEN,mei.chen@example.com,1737504000, 1, WELCOME5,$167.74,PENDING 
+1020,Ava Lee,ava.lee@example.com,1739318400,6, WELCOME5,111.20,Shipped
+1006,  mia smith  ,mia.smith@example.com,1738800000,1,SPRING10,140.59,PENDING
+1030,Ruby Singh,ruby.singh@example.com,13/45/2025,3,SPRING10, 123.8 ,delivered
+1060,Emma Wilson,emma.wilson@example.com,1736812800,2, WELCOME5,$138.94,Canceled
+1008,Liam  Chen,,1738972800,2,spring10,31.43,PENDING 
+1012,,HARPER.WALKER@EXAMPLE.COM,1737417600,3,N/A,315.05,Pending
+1053,  mia walker  ,MIA.WALKER@EXAMPLE.COM,1743379200, 3,N/A,461.04,DELIVERED
+1032,NOAH WILSON,noah.wilson@example.com,1742947200,6,SPRING10,762.43,delivered
+1038,Jack Chen,jack.chen@example.com,1739750400,3,FREESHIP,178.28,pending
+1029,HENRY O'BRIEN,henry.obrien@example.com,1737417600,6,N/A,877.12,CANCELLED
+1013,Sofia  O'Brien,sofia.obrien@example.com,1740614400,5,FREESHIP,$842.93,cancelled
+1031,arjun lee,arjun.lee@example.com,1739145600,3, WELCOME5,493.53,PENDING 
+1044,JAMES BROWN,james.brown@example.com,1736035200,1,FREESHIP,165.60,pending
+1003,arjun smith,arjun.smith@example.com,1742428800,6,,$426.09,CANCELLED
+1052,isla patel,isla.patel@example.com,1739923200,3,FREESHIP,191.56,Pending
+1041,Emma Lee,emma.lee@example.com,1740182400,3,FREESHIP,218.16,shipped
+1055,Arjun Martin,arjun.martin@example.com,1740268800,1,, 172.3 ,delivered
+1025,Chloe Nguyen,chloe.nguyen@example.com,1743206400,4,,452.85,cancelled
+1021,  olivia smith  ,olivia.smith@example.com,1743120000,1,,49.18,PENDING
+1059,Zoe O'Brien,ZOE.OBRIEN@EXAMPLE.COM,1737417600,3,FREESHIP,119.77,pending
+1006,mia smith,mia.smith@example.com,1738800000,1,SPRING10,140.59,Pending
+1026,isla smith,isla.smith@example.com,1738022400,6,,-35.00, SHIPPED
+1047,harper o'brien,harper.obrien@example.com,1739577600,3,N/A,96.37,Delivered
+1003,arjun smith,arjun.smith@example.com,1742428800,6,,$426.09,CANCELLED
