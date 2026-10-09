@@ -217,3 +217,13 @@ Here is the validation table:
 
 - Follow-up messages to reach a correct output: 7 Follow up messages
 - Total time: Logs (12:28pm - 12:57pm), 29 minutes to get the desired result
+
+## GCS destination
+
+- GCS bucket name: rhombus-drift-out-tanvir
+- Service account roles: Storage Object User and Storage Legacy Bucket Reader
+- Did the setup work the first time: Yes
+- Errors or surprises: Worked flawlessly
+- File format and where it lands: CSV, file output: `rhombus-drift-out-tanvir/RhombusAI_output_1791557000601.csv`
+
+Evidence: `observations/evidence/baseline-gcs-destination.png`
