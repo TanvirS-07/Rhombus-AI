@@ -1,0 +1,13 @@
+{
+  "_comment": "The data contract the cleaning pipeline is asked to meet. validate.py and reference_clean.py both read this file; change the prompt and this file together.",
+  "source_columns": ["order_id", "customer_name", "email", "country", "order_date", "quantity", "amount_usd", "status"],
+  "output_columns": ["order_id", "customer_name", "email", "country", "order_date", "quantity", "amount_usd", "status"],
+  "key": "order_id",
+  "allowed_countries": ["AU", "US", "GB", "NZ", "CA"],
+  "allowed_status": ["pending", "shipped", "delivered", "cancelled", "unknown"],
+  "date_window": ["2025-01-01", "2025-03-31"],
+  "amount_median_range": [10, 1000],
+  "unit_price_range": [5, 250],
+  "max_out_of_range_fraction": 0.05,
+  "scale_change_ratio": 20
+}
