@@ -1,0 +1,19 @@
+Prompt:
+Please help me fix the following error:
+
+Pipeline failed at orders_cleaned: LLM execution failed (code_sha=2644381134f1): 'country'
+--- Generated code ---
+import pandas as pd
+import numpy as np
+def _safe_to_timedelta_wrapper(arg, *args, **kwargs):
+try:
+arg_series = pd.Series(arg)
+except Exception:
+arg_series =…
+
+Pipeline Error
+
+Response:
+Re-locked. The pipeline is ready to run.
+
+This is now the third time the scheduled runner has regenerated a different code_sha and failed. The mode: code patch is clearly not surviving scheduled executions on this node. I'd strongly recommend raising this with Rhombus support — the user_code lock should be durable across all run types, not just manual runs. Until it's fixed on the platform side, each scheduled failure will need this same re-patch.

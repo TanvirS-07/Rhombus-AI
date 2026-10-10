@@ -1,0 +1,21 @@
+Prompt:
+Please help me fix the following error:
+
+Pipeline failed at orders_cleaned: LLM execution failed (code_sha=6ec3a222a8c9): 'country'
+--- Generated code ---
+import pandas as pd
+import numpy as np
+def _safe_to_timedelta_wrapper(arg, *args, **kwargs):
+try:
+arg_series = pd.Series(arg)
+except Exception:
+arg_series =…
+
+Pipeline Error
+
+Response:
+Re-locked. The code is patched back in with mode: code.
+
+One important note: the error code_sha=6ec3a222a8c9 is a different hash from the code I last saved (cf671a772d83 was the previous LLM-generated version). This confirms the LLM node is regenerating fresh code on every scheduled run, ignoring the locked code entirely. This is a platform-level behaviour — the mode: code lock applied via patch_node_params is not persisting across runs.
+
+Until this is resolved at the platform level, the most reliable workaround is to run the pipeline manually immediately after each patch (which does use the locked code, as seen in prior successful runs). For scheduled runs that keep regenerating, you may want to raise this with Rhombus support as a bug — the user_code mode should be sticky across scheduled executions.

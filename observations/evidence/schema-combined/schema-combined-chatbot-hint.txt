@@ -1,0 +1,11 @@
+Prompt:
+/pipeline The source file changed in 4 ways: the country column was removed, amount_usd was renamed to total_amount, order_date is now a Unix timestamp in seconds, and a new discount_code column was added. Read total_amount as amount_usd. If country is missing, output an empty country column. Ignore discount_code. Keep all other cleaning rules, keep the output columns the same as before, and make sure the original file format still works.
+
+Response:
+Updated the pipeline on the canvas.
+
+Change	Node	What changed
+Updated	orders_trimmed	Renames total_amount → amount_usd if present; drops any extra columns (e.g. discount_code) not in the canonical 8-column schema before dedup
+Updated	orders_cleaned	Adds an empty country column when it's absent from the source; parses order_date as Unix timestamp seconds first, then falls back to all existing string formats
+
+The output stays order_id, customer_name, email, country, order_date, quantity, amount_usd, status regardless of which source format arrives. The original file format (with amount_usd, country, string dates) continues to work unchanged.
