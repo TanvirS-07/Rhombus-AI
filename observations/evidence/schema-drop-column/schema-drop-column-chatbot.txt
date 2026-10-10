@@ -1,0 +1,19 @@
+Prompt:
+My S3 file orders.csv changed at 03:15 UTC (the country column was removed), but scheduled runs keep saying ‘Skipped due to unchanged data’ and the Data Input preview still shows country. Why, and how do I make the pipeline use the new file?
+
+Response:
+There are two separate things happening here, and both have the same root cause: Rhombus caches the source file's content hash to detect changes, and that cache hasn't been invalidated yet for your updated file.
+Why "Skipped due to unchanged data"
+When a scheduled run fires, Rhombus checks whether the S3 object has changed since the last successful run. This check is based on a cached readiness snapshot (valid for up to ~15 minutes, per platform config). If the cache was computed just before your 03:15 UTC upload and the scheduler fired shortly after, it sees the old hash and skips the run as a no-op.
+The Data Input preview showing `country` is the same issue — the preview is served from the cached version of the file, not from the live S3 object.
+How to force the pipeline to pick up the new file
+Option 1 — Trigger a manual run now (quickest)
+Click Run on the pipeline canvas. A manual run bypasses the "unchanged data" skip guard and forces a fresh read from S
+
+3. This will also refresh the Data Input preview to reflect the new schema.
+
+Option 2 — Wait for the cache to expire
+The source readiness cache expires after ~15 minutes. The next scheduled run after that window will re-read the file from S3 and detect the schema change.
+One thing to be aware of
+Your orders_cleaned node references `country` explicitly — it maps country variants to 2-letter ISO codes and writes to the `country` output column. Once the pipeline runs against the new file (without `country`), that node will encounter a missing column and will likely error or produce unexpected output.
+You'll want to update the orders_cleaned node's code to remove the country logic before or alongside triggering the re-run. Would you like me to update that node now?

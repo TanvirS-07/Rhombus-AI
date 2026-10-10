@@ -1,4 +1,4 @@
-# Baseline Observations Document
+﻿# Baseline Observations Document
 
 ## Summary
 
@@ -17,7 +17,7 @@
 
 ## Attempt 1: first output (looked fine, was wrong)
 
-Evidence: `observations/evidence/baseline-output-1.csv`
+Evidence: `observations/evidence/baseline/baseline-output-1.csv`
 
 The output had 56 rows. The Rhombus run status said successful and nothing warned that the data was wrong.
 
@@ -54,7 +54,7 @@ customer_name: keep apostrophes (O'Brien).
 
 The chatbot said "compile succeeded" and described the fixes. The output file (output 2) was identical to output 1: amounts were still `7084.0` and emails still blank. The chatbot claimed a fix that had no effect.
 
-Evidence: `observations/evidence/baseline-output-2.csv`
+Evidence: `observations/evidence/baseline/baseline-output-2.csv`
 
 ### Follow-up 2: ask for the exact rule
 
@@ -62,7 +62,7 @@ I told it : "The output still shows amount_usd 7084 for order 1004. It must be 7
 
 The chatbot found the real cause. A built-in `orders_trimmed` text-cleanup node stripped every non-alphanumeric character (including `.`, `-`, `@` and `'`) before the cleaning step ran. It changed that node to skip amount_usd and quantity. Emails were still blank and `Obrien` was still wrong in the next output.
 
-Evidence: `observations/evidence/baseline-output-3.csv`
+Evidence: `observations/evidence/baseline/baseline-output-3.csv`
 
 ### Follow-up 3: make orders_trimmed only trim spaces
 
@@ -70,7 +70,7 @@ I told it "/pipeline The orders_trimmed node still strips @, . and apostrophes. 
 
 `Pipeline failed at orders_trimmed: LLM transform requires a non-empty prompt when code is not provided.`
 
-Evidence: a screenshot of the error, `observations/evidence/baseline-error-empty-prompt.PNG`
+Evidence: a screenshot of the error, `observations/evidence/baseline/baseline-error-empty-prompt.PNG`
 
 ### Follow-up 4: fix the node prompt
 
@@ -82,7 +82,7 @@ The pipeline then ran end to end.
 
 ## Attempt 4: output after follow-ups
 
-Evidence: `observations/evidence/baseline-output-4.csv`
+Evidence: `observations/evidence/baseline/baseline-output-4.csv`
 
 Fixed:
 - Amounts (`70.84` stays `70.84`).
@@ -104,7 +104,7 @@ Prompt used:
 
 "/pipeline The output has 41 rows but should have 54. These valid orders are missing: 1003, 1004, 1005, 1013, 1018, 1022, 1040, 1045, 1046, 1050, 1057, 1058, 1060. For each node, list which order_ids it removed and why. Then fix the pipeline so rows are only removed if they are exact duplicates, repeated order_ids, or have an invalid date, a non-positive whole number quantity, or a negative or empty amount. Also, orders 1036 and 1006 have country "AU" in the source but come out blank. Keep two-letter codes as they are."
 
-It sent a drop trace that claimed 54 rows. The downloaded file (`observations/evidence/baseline-output-5.csv`) still had 41 rows.
+It sent a drop trace that claimed 54 rows. The downloaded file (`observations/evidence/baseline/baseline-output-5.csv`) still had 41 rows.
 
 I told it the new file had 41 rows again. Then I counted the rows in the Preview of each node myself:
 - Data input: 68
@@ -127,7 +127,7 @@ The chatbot fixed `orders_cleaned`. This time its row count matched the Preview 
 
 ## Final result (output 6)
 
-Evidence: `observations/evidence/baseline-output-6.csv`
+Evidence: `observations/evidence/baseline/baseline-output-6.csv`
 
 - Row count: 54 (expected 54).
 - No missing order ids and no extra order ids.
@@ -142,12 +142,12 @@ Nodes the AI builder created:
 - orders_deduped
 - orders_cleaned (LLM node)
 
-Pipeline canvas screenshot: `observations/evidence/Baseline-canvas.PNG`
+Pipeline canvas screenshot: `observations/evidence/baseline/Baseline-canvas.PNG`
 
 Validation command:
 
 ```bash
-python data-validation/validate.py --case baseline --input datasets/orders_baseline.csv --output observations/evidence/baseline-output-6.csv
+python data-validation/validate.py --case baseline --input datasets/orders_baseline.csv --output observations/evidence/baseline/baseline-output-6.csv
 ```
 
 Validation result: all content checks pass. The only failure is `rule.quantity_positive_int` (quantity written as `2.0`).
@@ -157,7 +157,7 @@ Here is the validation table:
 # Validation: `baseline` — ❌ FAIL
 
 - Input: `datasets/orders_baseline.csv`
-- Outputs: `observations/evidence/baseline-output-6.csv`
+- Outputs: `observations/evidence/baseline/baseline-output-6.csv`
 - 23 pass, 0 warn, 1 fail, 1 skipped
 
 | Check | Result | Detail |
@@ -226,7 +226,7 @@ Here is the validation table:
 - Errors or surprises: Worked flawlessly
 - File format and where it lands: CSV, file output: `rhombus-drift-out-tanvir/RhombusAI_output_1791557000601.csv`
 
-Evidence: `observations/evidence/baseline-gcs-destination.png`
+Evidence: `observations/evidence/baseline/baseline-gcs-destination.png`
 
 ## Schedule and first scheduled run
 
@@ -243,10 +243,10 @@ Result of the first scheduled run:
 **Finding: the successful scheduled run left no trace in the Rhombus logs. I only knew it had run because a new file appeared in the GCS bucket. Skipped runs, by contrast, are reported by email and with a skip counter.**
 
 Evidence:
-- `observations/evidence/baseline-schedule.PNG`
+- `observations/evidence/baseline/baseline-schedule.PNG`
 - `runs/baseline/run1.csv`
-- `observations/evidence/baseline-gcs-bucket.PNG` (bucket listing showing the new file)
-- `observations/evidence/baseline-skipped.PNG` (email showing scheduled run is skipped)
+- `observations/evidence/baseline/baseline-gcs-bucket.PNG` (bucket listing showing the new file)
+- `observations/evidence/baseline/baseline-skipped.PNG` (email showing scheduled run is skipped)
 
 ## Determinism
 - Output 6 (manual correct run) and run 1 (scheduled) are byte-for-byte identical.

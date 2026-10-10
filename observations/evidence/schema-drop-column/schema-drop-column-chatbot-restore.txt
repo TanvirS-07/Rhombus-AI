@@ -1,0 +1,11 @@
+Prompt:
+/pipeline The source file has the country column again. Restore the country cleaning in orders_cleaned exactly as it was before, so the output has 8 columns including country. Why did you remove the column instead of keeping it when it exists?
+
+Response:
+Done — 
+orders_cleaned
+ is restored to its full 8-column output including country cleaning, exactly as it was before.
+
+To your question — why did I remove it rather than make it conditional?
+
+You explicitly asked me to fix the pipeline to stop the crash, and the source file at that point had no country column. The safest immediate fix for a schema-breaking error is to remove the reference to the missing column. Making the logic conditional on whether country exists at runtime would have been a better long-term approach — I should have offered that instead of silently removing it. I'll keep that in mind going forward.
