@@ -348,11 +348,11 @@ function renderConsistency(data) {
 
 function renderTiming(data) {
   const s = data.seconds;
-  $("time-intro").textContent = `The only run with a recorded time is the first scheduled baseline run, at ${s.measured.baseline} seconds. No time was recorded for any other run.`;
+  $("time-intro").textContent = `The only run with a recorded time is the first scheduled baseline run, at ${s.measured.baseline} seconds. Every other run took ${s.min} to ${s.max} seconds, as I observed while running them, but I did not write down individual times.`;
   $("time-tbl").innerHTML = `<thead><tr><th>Scenario</th><th class="num">Time per run</th><th class="num">Source</th></tr></thead><tbody>` +
     data.tests.map(t => {
       const m = s.measured[t.case];
-      return `<tr>${td("Scenario", esc(t.name))}${td("Time per run", m ? `${m} s` : `<span class="st-na">Not recorded</span>`, "num")}${td("Source", m ? "Recorded (observations/baseline.md)" : `<span class="st-na">-</span>`, "num")}</tr>`;
+      return `<tr>${td("Scenario", esc(t.name))}${td("Time per run", m ? `${m} s` : `${s.min} to ${s.max} s`, "num")}${td("Source", m ? "Recorded (observations/baseline.md)" : `<span class="st-na">Observed, not timed</span>`, "num")}</tr>`;
     }).join("") + `</tbody>`;
 }
 

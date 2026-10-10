@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T15:29:41+00:00",
+  "generated_at": "2026-10-10T15:32:56+00:00",
   "known_issue": "quantity is written as 2.0 instead of 2",
   "tests": [
     {
@@ -744,6 +744,8 @@
     "GCS destination"
   ],
   "seconds": {
+    "min": 15,
+    "max": 20,
     "measured": {
       "baseline": 17
     }

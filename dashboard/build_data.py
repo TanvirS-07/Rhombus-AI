@@ -85,8 +85,9 @@ TESTS = [
 # "runs" is how many times a setup was run, as recorded in the write-ups.
 # The baseline file gave a byte-identical output 5 times across pipeline
 # versions (observations/baseline.md). Only the first scheduled baseline run
-# was timed (17 s); no other run time was recorded.
-SECONDS = {"measured": {"baseline": 17}}
+# was timed (17 s). Every other run took 15 to 20 seconds as observed by the
+# tester, but the individual times were not written down.
+SECONDS = {"min": 15, "max": 20, "measured": {"baseline": 17}}
 
 # heat columns: completed, correct, surfaced, chatbot (no hint), chatbot (hint)
 # values: ok, partial, stop (failed loudly), fail (wrong data or missed), na. Each pair is (state, label).
