@@ -90,7 +90,7 @@ Evidence: `observations/evidence/schema-drop-column/schema-drop-column-chatbot.t
 - Scheduled runs at 04:05, 04:10 and 04:15 UTC were all skipped ("Skipped 1/2/3 time(s) in a row due to unchanged data"), 20 to 30 minutes after the upload. Opening the eye view in between did not help. The node preview still showed the drop-column file without `country`.
 - I pressed Run manually at 04:17 UTC. Afterwards the node preview showed the baseline with `country`, so the manual run read the new file.
 - But the output had no `country`: 54 rows, 7 columns, identical to the drop-column output. The chatbot's fix silently dropped a valid column from good data, and the run status was success with no warning.
-- I asked the chatbot to restore the country cleaning and why it removed the column. It said: "Making the logic conditional on whether country exists at runtime would have been a better long-term approach — I should have offered that instead of silently removing it."
+- I asked the chatbot to restore the country cleaning and why it removed the column. It said: "Making the logic conditional on whether country exists at runtime would have been a better long-term approach, I should have offered that instead of silently removing it."
 - Manual run at 04:21 UTC: output identical to the baseline output 6 (54 rows, 8 columns). The pipeline was back to baseline.
 
 Outputs: `runs/schema_drop_column/after-restore.csv` (no country), `runs/schema_drop_column/restored.csv` (back to baseline)

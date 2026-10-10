@@ -1,0 +1,13 @@
+Prompt:
+/pipeline Restore orders_trimmed and orders_cleaned to exactly how they were before the rename test: remove the total_amount rename step and the column-existence guards, so a missing column fails the run again.
+
+Response:
+Both nodes restored on the canvas.
+
+Change	Node	What was restored
+Updated	
+orders_trimmed
+Trim/collapse spaces + currency strip only — no rename logic
+Updated	
+orders_cleaned
+Full 8-column cleaning with hard references to all columns — a missing column will fail the run

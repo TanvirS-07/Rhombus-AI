@@ -1,0 +1,11 @@
+Prompt:
+/pipeline The output has no amount column and kept orders 1023 and 1026. The source column amount_usd was renamed to total_amount. Read total_amount as amount_usd and keep amount_usd in the output.
+
+Response:
+Updated 
+orders_trimmed
+ on the canvas. It now renames total_amount → amount_usd at the very first step (before any other processing), so every downstream node — dedup, cleaning, and output — continues to see the column as amount_usd. The 
+orders_cleaned
+ node already handles amount_usd fully: it strips $/commas, validates the value, drops rows 1023 and 1026 (empty and negative amount respectively), and outputs the column as amount_usd.
+
+If the source column is ever renamed back to amount_usd, the rename step is skipped automatically.
