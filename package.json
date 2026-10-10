@@ -1,0 +1,13 @@
+{
+  "name": "rhombus-ai-drift-testing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --project=ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "dotenv": "^16.4.5"
+  }
+}
