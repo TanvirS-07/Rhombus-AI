@@ -1,0 +1,5 @@
+Prompt:
+/pipeline The slash dates in order_date are now DD/MM/YYYY, not MM/DD/YYYY. 16/03/2025 is 16 March. 14 dates in the output are swapped, for example order 1022 is 11/03/2025 in the source and should be 2025-03-11, not 2025-11-03. Read slash dates as DD/MM/YYYY. Keep all other cleaning rules.
+
+Response:
+Updated orders_cleaned on the canvas. The slash and dash date formats are now parsed as DD/MM/YYYY and DD-MM-YYYY — so 11/03/2025 correctly becomes 2025-03-11. YYYY-MM-DD, Unix timestamps, and Mon DD YYYY formats are all unchanged.

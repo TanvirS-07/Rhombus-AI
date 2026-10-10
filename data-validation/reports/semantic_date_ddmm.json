@@ -1,0 +1,289 @@
+{
+  "case": "semantic_date_ddmm",
+  "input": "datasets/orders_semantic_date_ddmm.csv",
+  "outputs": [
+    "runs/semantic_date_ddmm/run1.csv"
+  ],
+  "validated_at": "2026-10-10T06:28:30+00:00",
+  "summary": {
+    "PASS": 20,
+    "WARN": 1,
+    "FAIL": 3,
+    "SKIP": 1
+  },
+  "verdict": "FAIL",
+  "checks": [
+    {
+      "id": "input.schema",
+      "status": "PASS",
+      "message": "columns match the baseline",
+      "details": {}
+    },
+    {
+      "id": "input.types",
+      "status": "PASS",
+      "message": "column types match the baseline",
+      "details": {
+        "changed": {}
+      }
+    },
+    {
+      "id": "input.amount_scale",
+      "status": "PASS",
+      "message": "median amount_usd is 1.0x the baseline",
+      "details": {
+        "ratio": 1.0,
+        "column": "amount_usd"
+      }
+    },
+    {
+      "id": "input.date_order",
+      "status": "WARN",
+      "message": "39 slash dates have a first part > 12 vs 1 with a second part > 12: dates look DD/MM",
+      "details": {
+        "first_part_gt12": 39,
+        "second_part_gt12": 1
+      }
+    },
+    {
+      "id": "output.schema",
+      "status": "PASS",
+      "message": "output columns match the contract",
+      "details": {
+        "columns": [
+          "order_id",
+          "customer_name",
+          "email",
+          "country",
+          "order_date",
+          "quantity",
+          "amount_usd",
+          "status"
+        ],
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    {
+      "id": "output.rows",
+      "status": "PASS",
+      "message": "54 rows, expected 54",
+      "details": {
+        "actual": 54,
+        "expected": 54,
+        "duplicates": [],
+        "invented": [],
+        "dropped_valid": [],
+        "kept_invalid": []
+      }
+    },
+    {
+      "id": "rule.trimmed",
+      "status": "PASS",
+      "message": "text is trimmed",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.name_title_case",
+      "status": "PASS",
+      "message": "customer_name is Title Case and never empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.email",
+      "status": "PASS",
+      "message": "email is lowercase and valid, or empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.country_iso2",
+      "status": "PASS",
+      "message": "country is one of ['AU', 'CA', 'GB', 'NZ', 'US'] or empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.date_iso",
+      "status": "PASS",
+      "message": "order_date is YYYY-MM-DD",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.quantity_positive_int",
+      "status": "FAIL",
+      "message": "54/54 rows break: quantity is a positive integer",
+      "details": {
+        "examples": [
+          "2.0",
+          "3.0",
+          "2.0",
+          "6.0",
+          "6.0"
+        ]
+      }
+    },
+    {
+      "id": "rule.amount_2dp",
+      "status": "PASS",
+      "message": "amount_usd is a non-negative number, at most 2 decimals, no symbols",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.status",
+      "status": "PASS",
+      "message": "status is one of ['cancelled', 'delivered', 'pending', 'shipped', 'unknown']",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "values.customer_name",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.email",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.country",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.order_date",
+      "status": "FAIL",
+      "message": "14/54 rows differ from the reference",
+      "details": {
+        "diffs": [
+          {
+            "order_id": "1022",
+            "expected": "2025-03-11",
+            "actual": "2025-11-03"
+          },
+          {
+            "order_id": "1016",
+            "expected": "2025-01-09",
+            "actual": "2025-09-01"
+          },
+          {
+            "order_id": "1048",
+            "expected": "2025-02-04",
+            "actual": "2025-04-02"
+          },
+          {
+            "order_id": "1011",
+            "expected": "2025-03-02",
+            "actual": "2025-02-03"
+          },
+          {
+            "order_id": "1007",
+            "expected": "2025-02-08",
+            "actual": "2025-08-02"
+          }
+        ],
+        "diff_count": 14
+      }
+    },
+    {
+      "id": "values.quantity",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.amount_usd",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.status",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "semantic.date_window",
+      "status": "FAIL",
+      "message": "13/54 dates outside 2025-01-01..2025-03-31; months seen [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]",
+      "details": {
+        "examples": [
+          "2025-11-03",
+          "2025-09-01",
+          "2025-04-02",
+          "2025-08-02",
+          "2025-04-02"
+        ],
+        "months_seen": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      }
+    },
+    {
+      "id": "semantic.amount_scale",
+      "status": "PASS",
+      "message": "median amount_usd = 191.16 (expected 10..1000 dollars)",
+      "details": {
+        "median": 191.155
+      }
+    },
+    {
+      "id": "semantic.unit_price",
+      "status": "PASS",
+      "message": "0/54 implied unit prices outside $5..$250",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "determinism",
+      "status": "SKIP",
+      "message": "pass --output more than once to compare runs",
+      "details": {}
+    }
+  ]
+}

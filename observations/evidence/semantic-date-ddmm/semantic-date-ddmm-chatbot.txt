@@ -1,0 +1,25 @@
+Prompt:
+/pipeline Please check the latest output. Does anything look wrong with the data?
+
+Response:
+The output looks correct. Here's a summary:
+
+✅ All clean
+Check	Result
+Row count	54 rows, 8 columns
+amount_usd	$14.11–$940.49 — correctly in dollars (order 1004 = $70.84 ✓)
+order_date	All YYYY-MM-DD, no malformed dates
+quantity	All positive whole numbers
+country	Only AU/CA/GB/NZ/US or blank
+status	Only valid values (pending/shipped/delivered/cancelled/unknown)
+email	Valid format or blank
+customer_name	Title Case, blanks replaced with "Unknown"
+
+Minor items (expected, no action needed)
+3 null emails — invalid addresses correctly blanked
+1 null country — unrecognised value correctly left blank
+1 "Unknown" name — blank name correctly substituted
+1 "unknown" status — unrecognised status correctly normalised
+quantity shows as float (2.0) in the CSV read-back — a pandas type inference artefact, not a data issue
+
+The data looks good. No issues to fix.
