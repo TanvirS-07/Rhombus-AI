@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T07:13:42+00:00",
+  "generated_at": "2026-10-10T07:23:59+00:00",
   "known_issue": "quantity is written as 2.0 instead of 2",
   "tests": [
     {
@@ -299,5 +299,32 @@
         "validated_at": "2026-10-10T06:28:30+00:00"
       }
     }
+  ],
+  "findings": [
+    {
+      "title": "Dates were swapped silently and the fixes did nothing",
+      "body": "DD/MM dates were read as MM/DD and 14 wrong dates reached GCS with a success status. The chatbot said the dates were correct, then claimed two fixes that produced a byte-identical output.",
+      "doc": "observations/semantic-date-ddmm.md"
+    },
+    {
+      "title": "Chatbot fixes fit only the file in front of them",
+      "body": "One fix turned a crash into an empty file in GCS. Others worked for the drifted file but broke the original, and most only found the cause after I described it.",
+      "doc": "observations/schema-type-change.md"
+    },
+    {
+      "title": "A successful run says nothing about the data",
+      "body": "Every wrong output was reported as a success. The scheduler skipped changed files as unchanged data, and successful scheduled runs do not appear in the logs.",
+      "doc": "observations/baseline.md"
+    }
+  ],
+  "pipeline": [
+    "S3 source",
+    "orders_raw",
+    "orders_trimmed",
+    "orders_no_exact_dups",
+    "orders_deduped",
+    "orders_cleaned",
+    "orders_output",
+    "GCS destination"
   ]
 }

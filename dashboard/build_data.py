@@ -80,6 +80,31 @@ TESTS = [
 ]
 
 
+FINDINGS = [
+    {
+        "title": "Dates were swapped silently and the fixes did nothing",
+        "body": "DD/MM dates were read as MM/DD and 14 wrong dates reached GCS with a success status. "
+                "The chatbot said the dates were correct, then claimed two fixes that produced a byte-identical output.",
+        "doc": "observations/semantic-date-ddmm.md",
+    },
+    {
+        "title": "Chatbot fixes fit only the file in front of them",
+        "body": "One fix turned a crash into an empty file in GCS. Others worked for the drifted file but broke the original, "
+                "and most only found the cause after I described it.",
+        "doc": "observations/schema-type-change.md",
+    },
+    {
+        "title": "A successful run says nothing about the data",
+        "body": "Every wrong output was reported as a success. The scheduler skipped changed files as unchanged data, "
+                "and successful scheduled runs do not appear in the logs.",
+        "doc": "observations/baseline.md",
+    },
+]
+
+PIPELINE = ["S3 source", "orders_raw", "orders_trimmed", "orders_no_exact_dups",
+            "orders_deduped", "orders_cleaned", "orders_output", "GCS destination"]
+
+
 def main() -> None:
     tests = []
     for t in TESTS:
@@ -103,6 +128,8 @@ def main() -> None:
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "known_issue": "quantity is written as 2.0 instead of 2",
         "tests": tests,
+        "findings": FINDINGS,
+        "pipeline": PIPELINE,
     }
     out = Path(__file__).resolve().parent / "data.json"
     out.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
