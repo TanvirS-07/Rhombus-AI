@@ -227,3 +227,31 @@ Here is the validation table:
 - File format and where it lands: CSV, file output: `rhombus-drift-out-tanvir/RhombusAI_output_1791557000601.csv`
 
 Evidence: `observations/evidence/baseline-gcs-destination.png`
+
+## Schedule and first scheduled run
+
+- Schedule I set: hourly, at minute 45 (run 1). Afterwards I moved the minute to :56 and then :02 to try for more runs; both were skipped (see Determinism)
+- Was it easy to find and set the schedule: Yes, the feature was easy to find and change
+- First scheduled run: 2026-10-10 02:45 UTC (13:45 local)
+- Output file in GCS: `RhombusAI_output_1791600316494.csv` (4 KB)
+- Run duration: 17 seconds
+
+Result of the first scheduled run:
+- The file is byte-for-byte identical to output 6 (same checksum, 54 rows, same order, same values).
+- Validation result is the same as output 6: 23 pass, 1 fail (`rule.quantity_positive_int`, quantity written as `2.0`).
+
+**Finding: the successful scheduled run left no trace in the Rhombus logs. I only knew it had run because a new file appeared in the GCS bucket. Skipped runs, by contrast, are reported by email and with a skip counter.**
+
+Evidence:
+- `observations/evidence/baseline-schedule.PNG`
+- `runs/baseline/run1.csv`
+- `observations/evidence/baseline-gcs-bucket.PNG` (bucket listing showing the new file)
+- `observations/evidence/baseline-skipped.PNG` (email showing scheduled run is skipped)
+
+## Determinism
+- Output 6 (manual correct run) and run 1 (scheduled) are byte-for-byte identical.
+- The next scheduled run was skipped, with an email "Pipeline Run Skipped ... because the input data has not changed since the last successful run. If this happens multiple times, the schedule may be automatically paused."
+- I re-uploaded the identical `orders.csv` to S3 at 3:00 UTC (14:00 local). The next run was skipped again: "Skipped 2 time(s) in a row due to unchanged data".
+- So Rhombus compares file content, not upload time, and the scheduler cannot run the same input twice. Determinism was checked on 2 runs (1 manual, 1 scheduled), not 3.
+
+**Finding: repeated skips can pause the schedule automatically. In a real pipeline, a source file that is not updated on time could silently stop the schedule.**
