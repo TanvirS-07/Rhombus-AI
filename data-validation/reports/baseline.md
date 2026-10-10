@@ -1,7 +1,7 @@
 # Validation: `baseline` — ❌ FAIL
 
 - Input: `datasets/orders_baseline.csv`
-- Outputs: `observations/evidence/baseline-output-6.csv`
+- Outputs: `runs/baseline/run1.csv`
 - 23 pass, 0 warn, 1 fail, 1 skipped
 
 | Check | Result | Detail |

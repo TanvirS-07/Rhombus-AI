@@ -66,7 +66,7 @@ python data-validation/validate.py --case baseline --input datasets/orders_basel
 python data-validation/run_all.py
 ```
 
-`run_all.py` validates every folder in `runs/` and writes the reports to `data-validation/reports/`. Each check compares the output against the contract in `contract.json` and against a reference cleaner, and also looks for semantic problems such as dates outside the expected window or amounts at the wrong scale.
+`run_all.py` validates the first output (`run1*.csv`) of every folder in `runs/` and writes the reports, with paths relative to the repository root, to `data-validation/reports/`. The other files in a folder come from a changed pipeline or the baseline file, so they are not repeats of the same run; to compare true repeats, pass several `--output` files to `validate.py`. Each check compares the output against the contract in `contract.json` and against a reference cleaner, and also looks for semantic problems such as dates outside the expected window or amounts at the wrong scale.
 
 ## Observations
 

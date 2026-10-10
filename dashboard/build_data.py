@@ -83,10 +83,10 @@ TESTS = [
 # Run-level results for the bonus dashboard sections, written by hand from
 # observations/ and the output files kept in runs/. Only recorded runs count:
 # "runs" is how many times a setup was run, as recorded in the write-ups.
-# The baseline file gave a byte-identical output 5 times on the baseline
-# pipeline (observations/baseline.md). Run times were reported by the tester
-# as 15 to 20 seconds; only the first scheduled baseline run was timed (17 s).
-SECONDS = {"min": 15, "max": 20, "measured": {"baseline": 17}}
+# The baseline file gave a byte-identical output 5 times across pipeline
+# versions (observations/baseline.md). Only the first scheduled baseline run
+# was timed (17 s); no other run time was recorded.
+SECONDS = {"measured": {"baseline": 17}}
 
 # heat columns: completed, correct, surfaced, chatbot (no hint), chatbot (hint)
 # values: ok, partial, stop (failed loudly), fail (wrong data or missed), na. Each pair is (state, label).

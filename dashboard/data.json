@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T07:23:59+00:00",
+  "generated_at": "2026-10-10T15:29:41+00:00",
   "known_issue": "quantity is written as 2.0 instead of 2",
   "tests": [
     {
@@ -40,9 +40,9 @@
         "warned": [],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\baseline\\run1.csv"
+          "runs/baseline/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -135,9 +135,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_drop_column\\run1.csv"
+          "runs/schema_drop_column/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -212,8 +212,8 @@
         "counts": {
           "PASS": 16,
           "WARN": 1,
-          "FAIL": 4,
-          "SKIP": 2
+          "FAIL": 3,
+          "SKIP": 3
         },
         "verdict": "FAIL",
         "failed": [
@@ -224,10 +224,6 @@
           {
             "id": "output.rows",
             "message": "56 rows, expected 54; duplicates=[] invented=[] dropped_valid=[] kept_invalid=['1023', '1026']"
-          },
-          {
-            "id": "determinism",
-            "message": "runs differ in 56 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -238,10 +234,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_rename_column\\run1.csv",
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_rename_column\\run2-fixed.csv"
+          "runs/schema_rename_column/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -316,18 +311,14 @@
         "counts": {
           "PASS": 3,
           "WARN": 1,
-          "FAIL": 2,
-          "SKIP": 0
+          "FAIL": 1,
+          "SKIP": 1
         },
         "verdict": "FAIL",
         "failed": [
           {
             "id": "output.rows",
             "message": "output has no data rows"
-          },
-          {
-            "id": "determinism",
-            "message": "runs differ in 54 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -338,10 +329,9 @@
         ],
         "known_issue": false,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_type_change\\run1.csv",
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_type_change\\run2-fixed.csv"
+          "runs/schema_type_change/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -408,9 +398,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_add_column\\run1.csv"
+          "runs/schema_add_column/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -514,9 +504,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_combined\\run1-fixed.csv"
+          "runs/schema_combined/run1-fixed.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -591,8 +581,8 @@
         "counts": {
           "PASS": 18,
           "WARN": 2,
-          "FAIL": 5,
-          "SKIP": 0
+          "FAIL": 4,
+          "SKIP": 1
         },
         "verdict": "FAIL",
         "failed": [
@@ -607,10 +597,6 @@
           {
             "id": "semantic.unit_price",
             "message": "54/54 implied unit prices outside $5..$250"
-          },
-          {
-            "id": "determinism",
-            "message": "runs differ in 54 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -625,10 +611,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_cents\\run1.csv",
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_cents\\run2-fixed.csv"
+          "runs/semantic_cents/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     },
     {
@@ -701,10 +686,10 @@
       ],
       "validator": {
         "counts": {
-          "PASS": 21,
+          "PASS": 20,
           "WARN": 1,
           "FAIL": 3,
-          "SKIP": 0
+          "SKIP": 1
         },
         "verdict": "FAIL",
         "failed": [
@@ -725,11 +710,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run1.csv",
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run2-claimed-fix.csv",
-          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run3-claimed-fix.csv"
+          "runs/semantic_date_ddmm/run1.csv"
         ],
-        "validated_at": "2026-10-10T11:59:16+00:00"
+        "validated_at": "2026-10-10T15:29:07+00:00"
       }
     }
   ],
@@ -761,8 +744,6 @@
     "GCS destination"
   ],
   "seconds": {
-    "min": 15,
-    "max": 20,
     "measured": {
       "baseline": 17
     }

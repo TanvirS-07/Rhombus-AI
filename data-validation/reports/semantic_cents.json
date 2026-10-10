@@ -4,7 +4,7 @@
   "outputs": [
     "runs/semantic_cents/run1.csv"
   ],
-  "validated_at": "2026-10-10T06:10:12+00:00",
+  "validated_at": "2026-10-10T15:29:07+00:00",
   "summary": {
     "PASS": 18,
     "WARN": 2,

@@ -1,0 +1,123 @@
+[
+  {
+    "case": "baseline",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "rule.quantity_positive_int"
+    ],
+    "summary": {
+      "PASS": 23,
+      "WARN": 0,
+      "FAIL": 1,
+      "SKIP": 1
+    }
+  },
+  {
+    "case": "schema_add_column",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "rule.quantity_positive_int"
+    ],
+    "summary": {
+      "PASS": 22,
+      "WARN": 1,
+      "FAIL": 1,
+      "SKIP": 1
+    }
+  },
+  {
+    "case": "schema_combined",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "rule.quantity_positive_int",
+      "values.country"
+    ],
+    "summary": {
+      "PASS": 20,
+      "WARN": 2,
+      "FAIL": 2,
+      "SKIP": 1
+    }
+  },
+  {
+    "case": "schema_drop_column",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "output.schema",
+      "rule.quantity_positive_int"
+    ],
+    "summary": {
+      "PASS": 19,
+      "WARN": 1,
+      "FAIL": 2,
+      "SKIP": 3
+    }
+  },
+  {
+    "case": "schema_rename_column",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "output.schema",
+      "output.rows",
+      "rule.quantity_positive_int"
+    ],
+    "summary": {
+      "PASS": 16,
+      "WARN": 1,
+      "FAIL": 3,
+      "SKIP": 3
+    }
+  },
+  {
+    "case": "schema_type_change",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "output.rows"
+    ],
+    "summary": {
+      "PASS": 3,
+      "WARN": 1,
+      "FAIL": 1,
+      "SKIP": 1
+    }
+  },
+  {
+    "case": "semantic_cents",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "rule.quantity_positive_int",
+      "values.amount_usd",
+      "semantic.amount_scale",
+      "semantic.unit_price"
+    ],
+    "summary": {
+      "PASS": 18,
+      "WARN": 2,
+      "FAIL": 4,
+      "SKIP": 1
+    }
+  },
+  {
+    "case": "semantic_date_ddmm",
+    "runs": 1,
+    "verdict": "FAIL",
+    "failed_checks": [
+      "rule.quantity_positive_int",
+      "values.order_date",
+      "semantic.date_window"
+    ],
+    "summary": {
+      "PASS": 20,
+      "WARN": 1,
+      "FAIL": 3,
+      "SKIP": 1
+    }
+  }
+]

@@ -337,7 +337,7 @@ function renderConsistency(data) {
   const dd = data.tests.find(t => t.case === "semantic_date_ddmm");
   const ddRuns = dd.configs.filter(c => c.input === "Drift file").length;
   $("repeats").innerHTML = `<thead><tr><th>Input and setup</th><th class="num">Runs</th><th class="num">Result</th></tr></thead><tbody>` +
-    `<tr>${td("Input and setup", `Baseline file, baseline pipeline<span class="sub">${esc(base.configs[0].result)} output each time</span>`)}${td("Runs", base.configs[0].runs, "num")}${td("Result", `<span class="st st-ok">Identical every time</span>`, "num")}</tr>` +
+    `<tr>${td("Input and setup", `Baseline file, original and later pipeline versions<span class="sub">${esc(base.configs[0].result)} output each time, although the pipeline code changed between some runs</span>`)}${td("Runs", base.configs[0].runs, "num")}${td("Result", `<span class="st st-ok">Identical every time</span>`, "num")}</tr>` +
     `<tr>${td("Input and setup", `DD/MM file, original pipeline and two chatbot fixes<span class="sub">The fixes changed nothing, so the setup was effectively the same</span>`)}${td("Runs", ddRuns, "num")}${td("Result", `<span class="st st-ok">Identical every time</span>`, "num")}</tr></tbody>`;
 
   $("setups").innerHTML = `<thead><tr><th>Scenario</th><th>Setup</th><th>Result</th><th class="num">Runs</th></tr></thead><tbody>` +
@@ -348,11 +348,11 @@ function renderConsistency(data) {
 
 function renderTiming(data) {
   const s = data.seconds;
-  $("time-intro").textContent = `The only run with a recorded time is the first scheduled baseline run, at ${s.measured.baseline} seconds. For the drift runs I noted ${s.min} to ${s.max} seconds each but did not save individual times.`;
+  $("time-intro").textContent = `The only run with a recorded time is the first scheduled baseline run, at ${s.measured.baseline} seconds. No time was recorded for any other run.`;
   $("time-tbl").innerHTML = `<thead><tr><th>Scenario</th><th class="num">Time per run</th><th class="num">Source</th></tr></thead><tbody>` +
     data.tests.map(t => {
       const m = s.measured[t.case];
-      return `<tr>${td("Scenario", esc(t.name))}${td("Time per run", m ? `${m} s` : `${s.min} to ${s.max} s`, "num")}${td("Source", m ? "Recorded (observations/baseline.md)" : `<span class="st-na">Noted, not saved</span>`, "num")}</tr>`;
+      return `<tr>${td("Scenario", esc(t.name))}${td("Time per run", m ? `${m} s` : `<span class="st-na">Not recorded</span>`, "num")}${td("Source", m ? "Recorded (observations/baseline.md)" : `<span class="st-na">-</span>`, "num")}</tr>`;
     }).join("") + `</tbody>`;
 }
 

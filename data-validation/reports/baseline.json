@@ -2,9 +2,9 @@
   "case": "baseline",
   "input": "datasets/orders_baseline.csv",
   "outputs": [
-    "observations/evidence/baseline-output-6.csv"
+    "runs/baseline/run1.csv"
   ],
-  "validated_at": "2026-10-09T14:15:42+00:00",
+  "validated_at": "2026-10-10T15:29:07+00:00",
   "summary": {
     "PASS": 23,
     "WARN": 0,
