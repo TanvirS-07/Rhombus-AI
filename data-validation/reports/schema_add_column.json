@@ -1,0 +1,255 @@
+{
+  "case": "schema_add_column",
+  "input": "datasets/orders_schema_add_column.csv",
+  "outputs": [
+    "runs/schema_add_column/run1.csv"
+  ],
+  "validated_at": "2026-10-10T05:41:48+00:00",
+  "summary": {
+    "PASS": 22,
+    "WARN": 1,
+    "FAIL": 1,
+    "SKIP": 1
+  },
+  "verdict": "FAIL",
+  "checks": [
+    {
+      "id": "input.schema",
+      "status": "WARN",
+      "message": "schema drift: missing=[] added=['discount_code']",
+      "details": {
+        "missing": [],
+        "added": [
+          "discount_code"
+        ],
+        "likely_renames": {}
+      }
+    },
+    {
+      "id": "input.types",
+      "status": "PASS",
+      "message": "column types match the baseline",
+      "details": {
+        "changed": {}
+      }
+    },
+    {
+      "id": "input.amount_scale",
+      "status": "PASS",
+      "message": "median amount_usd is 1.0x the baseline",
+      "details": {
+        "ratio": 1.0,
+        "column": "amount_usd"
+      }
+    },
+    {
+      "id": "input.date_order",
+      "status": "PASS",
+      "message": "1 slash dates have a first part > 12 vs 39 with a second part > 12: dates look MM/DD",
+      "details": {
+        "first_part_gt12": 1,
+        "second_part_gt12": 39
+      }
+    },
+    {
+      "id": "output.schema",
+      "status": "PASS",
+      "message": "output columns match the contract",
+      "details": {
+        "columns": [
+          "order_id",
+          "customer_name",
+          "email",
+          "country",
+          "order_date",
+          "quantity",
+          "amount_usd",
+          "status"
+        ],
+        "missing": [],
+        "unexpected": []
+      }
+    },
+    {
+      "id": "output.rows",
+      "status": "PASS",
+      "message": "54 rows, expected 54",
+      "details": {
+        "actual": 54,
+        "expected": 54,
+        "duplicates": [],
+        "invented": [],
+        "dropped_valid": [],
+        "kept_invalid": []
+      }
+    },
+    {
+      "id": "rule.trimmed",
+      "status": "PASS",
+      "message": "text is trimmed",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.name_title_case",
+      "status": "PASS",
+      "message": "customer_name is Title Case and never empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.email",
+      "status": "PASS",
+      "message": "email is lowercase and valid, or empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.country_iso2",
+      "status": "PASS",
+      "message": "country is one of ['AU', 'CA', 'GB', 'NZ', 'US'] or empty",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.date_iso",
+      "status": "PASS",
+      "message": "order_date is YYYY-MM-DD",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.quantity_positive_int",
+      "status": "FAIL",
+      "message": "54/54 rows break: quantity is a positive integer",
+      "details": {
+        "examples": [
+          "2.0",
+          "3.0",
+          "2.0",
+          "6.0",
+          "6.0"
+        ]
+      }
+    },
+    {
+      "id": "rule.amount_2dp",
+      "status": "PASS",
+      "message": "amount_usd is a non-negative number, at most 2 decimals, no symbols",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "rule.status",
+      "status": "PASS",
+      "message": "status is one of ['cancelled', 'delivered', 'pending', 'shipped', 'unknown']",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "values.customer_name",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.email",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.country",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.order_date",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.quantity",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.amount_usd",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "values.status",
+      "status": "PASS",
+      "message": "all 54 matched rows agree with the reference",
+      "details": {
+        "diffs": [],
+        "diff_count": 0
+      }
+    },
+    {
+      "id": "semantic.date_window",
+      "status": "PASS",
+      "message": "all dates inside 2025-01-01..2025-03-31",
+      "details": {
+        "examples": [],
+        "months_seen": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "semantic.amount_scale",
+      "status": "PASS",
+      "message": "median amount_usd = 191.16 (expected 10..1000 dollars)",
+      "details": {
+        "median": 191.155
+      }
+    },
+    {
+      "id": "semantic.unit_price",
+      "status": "PASS",
+      "message": "0/54 implied unit prices outside $5..$250",
+      "details": {
+        "examples": []
+      }
+    },
+    {
+      "id": "determinism",
+      "status": "SKIP",
+      "message": "pass --output more than once to compare runs",
+      "details": {}
+    }
+  ]
+}
