@@ -1,0 +1,20 @@
+Prompt:
+Please help me fix the following error:
+
+Pipeline failed at orders_cleaned: LLM execution failed (code_sha=cf671a772d83): name 'TypeError' is not defined
+--- Generated code ---
+import pandas as pd
+import numpy as np
+def _safe_to_timedelta_wrapper(arg, *args, **kwargs):
+try:
+arg_series = pd.Series(arg)
+except Exception…
+
+Pipeline Error
+
+Response:
+Fixed. 
+orders_cleaned
+ has been re-locked with mode: code and the working code. The except (ValueError, TypeError) clauses have also been replaced with bare except Exception to avoid the TypeError is not defined error that occurs in the sandboxed execution environment where some built-in names aren't directly accessible.
+
+The pipeline is ready to run.

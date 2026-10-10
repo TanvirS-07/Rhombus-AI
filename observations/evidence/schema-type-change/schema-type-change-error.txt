@@ -1,0 +1,15 @@
+Pipeline failed at orders_cleaned: LLM execution failed (code_sha=cf671a772d83): name 'TypeError' is not defined --- Generated code --- import pandas as pd import numpy as np def _safe_to_timedelta_wrapper(arg, *args, **kwargs): try: arg_series = pd.Series(arg) except Exception…
+
+{
+  "kind": "pipeline_summary",
+  "status": "error",
+  "failure": {
+    "message": "Pipeline failed at orders_cleaned: LLM execution failed (code_sha=cf671a772d83): name 'TypeError' is not defined\n--- Generated code ---\nimport pandas as pd\nimport numpy as np\ndef _safe_to_timedelta_wrapper(arg, *args, **kwargs):\n    try:\n        arg_series = pd.Series(arg)\n    except Exception…",
+    "reason": "LLM execution failed (code_sha=cf671a772d83): name 'TypeError' is not defined\n--- Generated code ---\nimport pandas as pd\nimport numpy as np\ndef _safe_to_timedelta_wrapper(arg, *args, **kwargs):\n    try:\n        arg_series = pd.Series(arg)\n    except Exception…",
+    "nodeId": "llm_node_1",
+    "nodeLabel": "orders_cleaned",
+    "nodeRef": "llm_6e454ffaa41a201cde9b450de4b3e1f3"
+  },
+  "nodeId": "llm_node_1",
+  "nodeName": "orders_cleaned"
+}

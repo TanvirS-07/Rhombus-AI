@@ -1,0 +1,63 @@
+{
+  "case": "schema_type_change",
+  "input": "datasets/orders_schema_type_change.csv",
+  "outputs": [
+    "runs/schema_type_change/run1.csv"
+  ],
+  "validated_at": "2026-10-10T05:21:54+00:00",
+  "summary": {
+    "PASS": 3,
+    "WARN": 1,
+    "FAIL": 1,
+    "SKIP": 1
+  },
+  "verdict": "FAIL",
+  "checks": [
+    {
+      "id": "input.schema",
+      "status": "PASS",
+      "message": "columns match the baseline",
+      "details": {}
+    },
+    {
+      "id": "input.types",
+      "status": "WARN",
+      "message": "type drift: {'order_date': 'date -> epoch'}",
+      "details": {
+        "changed": {
+          "order_date": "date -> epoch"
+        }
+      }
+    },
+    {
+      "id": "input.amount_scale",
+      "status": "PASS",
+      "message": "median amount_usd is 1.0x the baseline",
+      "details": {
+        "ratio": 1.0,
+        "column": "amount_usd"
+      }
+    },
+    {
+      "id": "input.date_order",
+      "status": "PASS",
+      "message": "1 slash dates have a first part > 12 vs 1 with a second part > 12: dates look MM/DD",
+      "details": {
+        "first_part_gt12": 1,
+        "second_part_gt12": 1
+      }
+    },
+    {
+      "id": "output.rows",
+      "status": "FAIL",
+      "message": "output has no data rows",
+      "details": {}
+    },
+    {
+      "id": "determinism",
+      "status": "SKIP",
+      "message": "pass --output more than once to compare runs",
+      "details": {}
+    }
+  ]
+}

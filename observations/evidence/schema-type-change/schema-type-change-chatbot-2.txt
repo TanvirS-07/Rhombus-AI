@@ -1,0 +1,7 @@
+Prompt:
+/pipeline The output is empty. order_date in the source is now a Unix timestamp in seconds (e.g. 1742083200), not a date string. Convert it to YYYY-MM-DD and keep the other cleaning rules.
+
+Response:
+Updated 
+orders_cleaned
+ on the canvas. The date parser now tries Unix timestamp conversion first (datetime.fromtimestamp(ts, utc) → YYYY-MM-DD), then falls back to the existing string formats (M/D/YYYY, YYYY-MM-DD, Mon DD YYYY, etc.) — so the node handles both the new Unix format and any historically formatted dates without any other rules changing.
