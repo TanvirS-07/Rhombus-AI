@@ -2,11 +2,43 @@
 
 ## Summary
 
+The AI builder needed 6 outputs and 7 follow-up messages (about 29 minutes) to produce a correct file. Every incorrect output was reported as a successful run.
+
+Output 6 is correct: 54 rows, matching the expected result. The one remaining issue is that quantity is written as `2.0` instead of `2`.
+
+The baseline file produced the same output, byte for byte, in 5 separate runs: output 6, the first scheduled run, and the 3 restore runs after the drift tests.
+
+### Main findings
+
+1. Runs were reported as successful while the data was wrong (amounts 100x too large, blank emails, invalid rows kept). The platform gave no warning.
+2. The chatbot reported fixes that did not change the output. It found the actual cause only after I pointed out that the output was unchanged and asked for the exact rule.
+3. A default text cleanup step removed decimal points, minus signs and email characters.
+4. 13 valid orders were removed in `orders_cleaned` without any warning.
+5. The chatbot's figures did not match the data. It reported "87 rows affected" on a 68 row file, and 54 rows when the Preview showed 41.
+6. The builder created a node with an empty prompt, which stopped the pipeline from running.
+7. Quantity is exported as `2.0` instead of `2`.
+8. Successful scheduled runs do not appear in the Rhombus logs. Only skipped runs are reported.
+9. The scheduler skips runs when it considers the data unchanged, and the skip email warns that repeated skips can pause the schedule.
+
+### Runs
+
+- Output 1: 56 rows, amounts 100x too large, emails blank
+- Output 2: identical to output 1, although the chatbot reported a fix
+- Output 3: amounts fixed, emails and apostrophes still wrong
+- Next run: failed (node with an empty prompt)
+- Outputs 4 and 5: 41 rows, 13 valid orders missing
+- Output 6: correct, 54 rows
+- First scheduled run: identical to output 6
+
+### Test details
+
 - Source file: `datasets/orders_baseline.csv` (68 rows)
 - Expected output: 54 rows. The file holds 60 distinct orders plus 5 exact duplicates and 3 near-duplicates. Six orders are invalid and must be removed (1015, 1019, 1023, 1026, 1030, 1034).
 - Pipeline built with: the Rhombus AI builder only (`/pipeline` and chat follow-ups). No nodes were added or edited by hand.
 - Result: it took 6 outputs to get a correct file.
 - Date: 2026-10-09 (UTC)
+
+---
 
 ## What I did
 
@@ -92,7 +124,7 @@ Fixed:
 - Bad rows 1015 and 1026 are removed.
 
 Still wrong:
-- It had 41 rows instead of 54. Thirteen valid orders were silently missing: 1003, 1004, 1005, 1013, 1018, 1022, 1040, 1045, 1046, 1050, 1057, 1058 and 1060. None of them has an invalid date, quantity or amount.
+- It had 41 rows instead of 54. Thirteen valid orders were missing: 1003, 1004, 1005, 1013, 1018, 1022, 1040, 1045, 1046, 1050, 1057, 1058 and 1060. None of them has an invalid date, quantity or amount.
 - Orders 1036 and 1006 still had a blank country (source `AU`).
 - Quantity was still written as `2.0` in the CSV.
 
@@ -203,16 +235,6 @@ Here is the validation table:
 }
 ````
 
-## Findings
-
-1. **The run status said success while the data was wrong.** Amounts were 100x too big, emails were blank and invalid rows were kept. Nothing in the platform flagged it.
-2. **The chatbot claimed fixes that did not change the output.** It only found the real cause when I told it the output was still wrong and asked for the exact rule.
-3. **The AI builder created a node it could not run.** The LLM node had an empty prompt.
-4. **A default text-cleanup step silently destroyed numeric formatting.** Decimal points, minus signs and email characters were stripped.
-5. **Valid rows were dropped without any warning or explanation.** Thirteen valid orders went missing in `orders_cleaned`.
-6. **The chatbot's own numbers did not match the data.** It reported "87 rows affected" on a 68-row file, and it claimed 54 rows when the Preview showed 41.
-7. **Quantity is exported as a float (`2.0`)** even though it is a whole number.
-
 ## Time spent
 
 - Follow-up messages to reach a correct output: 7 Follow up messages
@@ -252,6 +274,7 @@ Evidence:
 - Output 6 (manual correct run) and run 1 (scheduled) are byte-for-byte identical.
 - The next scheduled run was skipped, with an email "Pipeline Run Skipped ... because the input data has not changed since the last successful run. If this happens multiple times, the schedule may be automatically paused."
 - I re-uploaded the identical `orders.csv` to S3 at 3:00 UTC (14:00 local). The next run was skipped again: "Skipped 2 time(s) in a row due to unchanged data".
-- So Rhombus compares file content, not upload time, and the scheduler cannot run the same input twice. Determinism was checked on 2 runs (1 manual, 1 scheduled), not 3.
+- The scheduler does not run the same input twice. The later tests showed why: the pipeline keeps a stored copy of the S3 file, and scheduled runs did not pick up a changed file either (see `schema-drop-column.md`). Only a manual Run reads the current file.
+- Later runs added more evidence. The baseline file produced the same output, byte for byte, 5 times in total: output 6, scheduled run 1, and the restore runs in the drop column, rename column and type change tests (`runs/schema_drop_column/restored.csv`, `runs/schema_rename_column/restored.csv`, `runs/schema_type_change/restored.csv`). The pipeline code changed between some of these runs, and the output stayed the same.
 
-**Finding: repeated skips can pause the schedule automatically. In a real pipeline, a source file that is not updated on time could silently stop the schedule.**
+**Finding: repeated skips can pause the schedule automatically. In a real pipeline, a source file that is not updated on time could stop the schedule without anyone noticing.**

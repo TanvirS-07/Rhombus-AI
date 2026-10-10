@@ -1,5 +1,27 @@
 # Schema drift: rename column (`amount_usd` to `total_amount`)
 
+## Summary
+
+Severity: High
+
+The first run failed. The "Ask Chatbot" fix allowed the run to succeed, but the output had no amount column and kept 2 invalid orders. The second fix worked, but only after I identified the rename myself.
+
+### Main findings
+
+1. The chatbot treated `amount_usd` as missing and did not notice the new `total_amount` column.
+2. After its fix, the run was reported as successful with no amount column and 56 rows instead of 54 (invalid orders 1023 and 1026 were kept).
+3. The fix changed the pipeline to skip any missing column, so other schema changes would also pass without an error.
+4. The error message only shows `'amount_usd'` followed by the generated code. It does not mention the new column.
+
+### Runs
+
+- First run: failed, no file written
+- After fix 1: success, 56 rows, no amount column (`runs/schema_rename_column/run1.csv`)
+- After fix 2 (with my hint): identical to the baseline (`run2-fixed.csv`)
+- After the restore: identical to the baseline (`restored.csv`)
+
+---
+
 ## What I changed
 
 - Source file: `datasets/orders_schema_rename_column.csv`. It has the same 68 rows and 8 columns as the baseline, but `amount_usd` is renamed to `total_amount`. The values are unchanged.
@@ -62,7 +84,7 @@ Evidence: `observations/evidence/schema-rename-column/schema-rename-column-error
 I used the "Ask Chatbot" button on the error. The chatbot said it made `orders_cleaned` "schema-resilient": every cleaning step and drop condition is now skipped if its column is missing, and the output only includes columns that are present "in canonical order".
 
 - Diagnosis: wrong. It treated `amount_usd` as missing and never noticed the rename to `total_amount`.
-- Did the fix work: no. The run went green but silently lost the amount column and kept 2 invalid orders. It turned a loud failure into silent data loss.
+- Did the fix work: no. The run succeeded, but the amount column was missing and 2 invalid orders were kept. A failed run became a successful run with incorrect data.
 - It also changed the pipeline in a general way: any missing column would now be skipped instead of failing the run.
 
 Evidence: `observations/evidence/schema-rename-column/schema-rename-column-chatbot.txt`
@@ -133,12 +155,5 @@ python data-validation/validate.py --case schema_rename_column --input datasets/
 ````
 
 - My validator spotted the rename (`likely renames={'amount_usd': 'total_amount'}`), which the chatbot missed.
-- It caught the silent damage: the missing amount column (`output.schema`) and the 2 invalid orders that were kept (`output.rows`).
+- It caught the problems the run status did not show: the missing amount column (`output.schema`) and the 2 invalid orders that were kept (`output.rows`).
 - `rule.quantity_positive_int` fails for the same reason as the baseline (`2.0`).
-
-## Verdict
-
-- Pipeline stopped: yes, the first run failed.
-- Chatbot fix worked: no on the first attempt (silent data loss); yes on the second, but only after I diagnosed the rename myself.
-- Severity: High
-- Summary: The run failed loudly at first, which is good. But the "Ask Chatbot" fix misread the rename as a missing column and made the pipeline skip missing columns. The next run was green while losing every amount and keeping 2 invalid orders. A user who trusted the green status would ship wrong data.

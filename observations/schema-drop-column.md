@@ -1,5 +1,27 @@
 # Schema drift: drop column (`country`)
 
+## Summary
+
+Severity: High
+
+The first run after the change failed, which is the expected behaviour. The chatbot's fix allowed the drifted file to run, but it did so by removing all `country` handling. When the original file was restored, the run succeeded but the output had no `country` column until I asked the chatbot to restore it.
+
+### Main findings
+
+1. The scheduler did not pick up the new file. Scheduled runs were skipped as "unchanged data" 20 to 30 minutes after the upload, and only a manual Run read the new file. The chatbot attributed this to a 15 minute cache, which was not correct.
+2. The error message is mostly generated code. The only reference to the problem is `KeyError: 'country'`, and it does not state that the column is missing.
+3. The chatbot removed `country` instead of making it optional, so the original file lost a valid column without any warning.
+4. The schedule remained active after 4 consecutive skips and a failed run.
+
+### Runs
+
+- After the change: failed, no file written
+- After the chatbot fix: success, 54 rows, 7 columns (`runs/schema_drop_column/run1.csv`)
+- Original file with the fix in place: success, `country` missing (`after-restore.csv`)
+- After the chatbot restore: identical to the baseline (`restored.csv`)
+
+---
+
 ## What I changed
 
 - Source file: `datasets/orders_schema_drop_column.csv`. It has the same 68 rows as the baseline, but the `country` column is removed (7 columns instead of 8).
@@ -19,7 +41,7 @@ Rhombus would notice the missing `country` column and either stop the run or war
 
 ## What happened
 
-### 1. The new file was not picked up straight away
+### 1. The new file was not picked up
 
 - The scheduled runs at 03:18 UTC and 03:20 UTC (both after the upload) were skipped: "Skipped 3 time(s) in a row due to unchanged data", then "Skipped 4 time(s)".
 - The Data Input node preview in the pipeline still showed `country`.
@@ -89,7 +111,7 @@ Evidence: `observations/evidence/schema-drop-column/schema-drop-column-chatbot.t
 - Uploaded `datasets/orders_baseline.csv` as `rhombus/orders.csv` at 03:45 UTC (14:45 local).
 - Scheduled runs at 04:05, 04:10 and 04:15 UTC were all skipped ("Skipped 1/2/3 time(s) in a row due to unchanged data"), 20 to 30 minutes after the upload. Opening the eye view in between did not help. The node preview still showed the drop-column file without `country`.
 - I pressed Run manually at 04:17 UTC. Afterwards the node preview showed the baseline with `country`, so the manual run read the new file.
-- But the output had no `country`: 54 rows, 7 columns, identical to the drop-column output. The chatbot's fix silently dropped a valid column from good data, and the run status was success with no warning.
+- But the output had no `country`: 54 rows, 7 columns, identical to the drop-column output. The chatbot's fix dropped a valid column from good data, and the run was still reported as successful with no warning.
 - I asked the chatbot to restore the country cleaning and why it removed the column. It said: "Making the logic conditional on whether country exists at runtime would have been a better long-term approach, I should have offered that instead of silently removing it."
 - Manual run at 04:21 UTC: output identical to the baseline output 6 (54 rows, 8 columns). The pipeline was back to baseline.
 
@@ -141,10 +163,3 @@ python data-validation/validate.py --case schema_drop_column --input datasets/or
 
 - The validator flagged the drift in the input (`input.schema` warning) and in the output (`output.schema` fail).
 - `rule.quantity_positive_int` fails for the same reason as the baseline (`2.0`), not because of this drift.
-
-## Verdict
-
-- Pipeline stopped: yes, the first run after the change failed.
-- Chatbot fix worked: yes for the drifted file, but it broke the pipeline for the original file (silently dropped `country`) until I asked for it to be restored.
-- Severity: High
-- Summary: Rhombus failed loudly when `country` disappeared, which is the right behaviour. But the scheduler did not notice the changed S3 file and kept skipping runs as "unchanged data"; the chatbot's "15-minute cache" explanation was wrong. The error message is a raw code dump. The chatbot's fix removed `country` handling instead of making the column optional, so when the original file came back, a valid column was silently dropped with a success status.

@@ -1,5 +1,26 @@
 # Schema drift: type change (`order_date` to Unix timestamp)
 
+## Summary
+
+Severity: High
+
+The first run failed with an error unrelated to the actual cause. The "Ask Chatbot" fix then produced an empty file in GCS, and the run was still reported as successful. The second fix worked, but only after I explained that the dates were now Unix timestamps.
+
+### Main findings
+
+1. The error message was `name 'TypeError' is not defined`. It did not mention `order_date` or the timestamp format.
+2. The chatbot fixed the crash but not the cause. Every row was dropped and an empty file (header only) was written to GCS. The only warning was a small note on the node.
+3. The second fix handles both Unix timestamps and date strings, and the original file still produces the baseline output, so I kept it.
+
+### Runs
+
+- First run: failed, no file written
+- After fix 1: success, 0 rows (`runs/schema_type_change/run1.csv`)
+- After fix 2 (with my hint): identical to the baseline (`run2-fixed.csv`)
+- Original file with fix 2 in place: identical to the baseline (`restored.csv`)
+
+---
+
 ## What I changed
 
 - Source file: `datasets/orders_schema_type_change.csv`. It has the same 68 rows and 8 columns as the baseline, but `order_date` is now a Unix timestamp in seconds (for example `1742083200`) instead of a date string. The two invalid dates from the baseline (order 1034 empty, order 1030 `13/45/2025`) are left as they were.
@@ -51,7 +72,7 @@ def _safe_to_timedelta_wrapper(arg, *args, **kwargs):
 ...
 ```
 
-- This is the least helpful error so far. It does not mention `order_date`, dates or timestamps at all.
+- This was the least clear error in the tests. It does not mention `order_date`, dates or timestamps at all.
 - `name 'TypeError' is not defined` is about Python itself: the generated code has `except (ValueError, TypeError)`, and Rhombus's sandbox does not seem to allow the name `TypeError`. The new data made the code reach that line and crash (inferred from the chatbot's answer, not confirmed).
 - So the real cause (a changed date format) was hidden behind an unrelated crash.
 - The `code_sha` (`cf671a772d83`) is the same as in the rename test, so the restore after the rename test brought back the same node code.
@@ -65,7 +86,7 @@ Evidence: `observations/evidence/schema-type-change/schema-type-change-error.txt
 The chatbot said it replaced the `except (ValueError, TypeError)` clauses with `except Exception` "to avoid the TypeError is not defined error that occurs in the sandboxed execution environment where some built-in names aren't directly accessible", and said "The pipeline is ready to run."
 
 - Diagnosis: only half right. It fixed the crash but never looked at why the data reached that code. It did not notice that `order_date` changed to timestamps.
-- Did the fix work: no. With the crash gone, every timestamp failed to parse as a date, every row was dropped as invalid, and an empty file was written to GCS. A loud failure became silent total data loss.
+- Did the fix work: no. With the crash gone, every timestamp failed to parse as a date, every row was dropped as invalid, and an empty file was written to GCS. A failed run became a successful run with no data.
 
 Evidence: `observations/evidence/schema-type-change/schema-type-change-chatbot.txt`
 
@@ -116,13 +137,6 @@ python data-validation/validate.py --case schema_type_change --input datasets/or
 | `determinism` | ⏭️ SKIP | pass --output more than once to compare runs |
 ````
 
-- My validator named the real cause straight away (`order_date: date -> epoch`), which neither the error message nor the chatbot did.
+- My validator named the real cause right away (`order_date: date -> epoch`), which neither the error message nor the chatbot did.
 - It caught the empty output (`output.rows`), which Rhombus only hinted at in a small node note.
 - The other checks did not run because there were no rows to check.
-
-## Verdict
-
-- Pipeline stopped: yes, the first run failed, but with a misleading error.
-- Chatbot fix worked: no on the first attempt (an empty file was written to GCS); yes on the second, but only after I diagnosed the type change myself.
-- Severity: High
-- Summary: The error message pointed at a Python internals problem (`TypeError` not defined) instead of the changed date format. The "Ask Chatbot" fix removed the crash without finding the cause, so the next run dropped every row and delivered an empty file to GCS with a success status and only a small node note as warning. A downstream system reading that file would see zero orders.

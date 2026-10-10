@@ -1,5 +1,22 @@
 # Schema drift: add column (`discount_code`)
 
+## Summary
+
+Severity: Low
+
+Rhombus handled this change correctly. The output was identical to the baseline and no fix was needed.
+
+### Main findings
+
+1. The pipeline selects its 8 columns by name, so the extra column and the changed column order had no effect.
+2. The new column was dropped without any message. 47 of 68 orders had a discount code, and Rhombus gave no indication that new data was arriving.
+
+### Runs
+
+- Run: success, identical to the baseline (`runs/schema_add_column/run1.csv`)
+
+---
+
 ## What I changed
 
 - Source file: `datasets/orders_schema_add_column.csv`. It has the same 68 rows as the baseline plus a new column, `discount_code`, between `quantity` and `amount_usd` (9 columns instead of 8).
@@ -23,7 +40,7 @@ The pipeline only picks the 8 known columns, so it ignores `discount_code` and t
 - Status: succeeded with no warning. Output `RhombusAI_output_1791610758314.csv` (4 KB) was written to GCS.
 - The output is byte-for-byte identical to the baseline output 6: 54 rows, the same 8 columns, the same values.
 - `discount_code` is not in the output. The column order shift in the source did not break anything, because the pipeline reads columns by name.
-- Rhombus did not say anywhere that a new column appeared. It was dropped silently.
+- Rhombus did not say anywhere that a new column appeared. It was dropped without notice.
 
 Output: `runs/schema_add_column/run1.csv`
 
@@ -87,10 +104,3 @@ python data-validation/validate.py --case schema_add_column --input datasets/ord
 
 - The validator flagged the new column in the input (`input.schema` warning). Rhombus did not.
 - Everything in the output is correct. `rule.quantity_positive_int` fails for the same reason as the baseline (`2.0`), not because of this drift.
-
-## Verdict
-
-- Pipeline stopped: no, and it did not need to.
-- Chatbot fix needed: no.
-- Severity: Low
-- Summary: This is the one schema change Rhombus handled cleanly. The output was identical to the baseline, because the pipeline picks its 8 columns by name and ignores anything else. The only gap is visibility: a new column in the source is dropped without any notice, so a user would never learn that new data (here, discount codes on 47 of 68 orders) is arriving and being thrown away.
