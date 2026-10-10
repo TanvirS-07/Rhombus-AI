@@ -11,6 +11,23 @@
       "chatbot": "Correct after 6 outputs and 7 follow-ups",
       "severity": "None",
       "summary": "The correct pipeline output. Every earlier wrong output was reported as a success.",
+      "group": "Baseline",
+      "health": {
+        "runs": 5,
+        "completed": true,
+        "correct": true
+      },
+      "verdict": null,
+      "heat": null,
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/baseline/run1.csv",
+          "runs": 5
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 23,
@@ -23,9 +40,9 @@
         "warned": [],
         "known_issue": true,
         "outputs": [
-          "observations/evidence/baseline-output-6.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\baseline\\run1.csv"
         ],
-        "validated_at": "2026-10-09T14:15:42+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -37,6 +54,65 @@
       "chatbot": "Only for the drifted file; it broke the original file",
       "severity": "High",
       "summary": "The run failed with a code dump. The fix only worked for the new file.",
+      "group": "Schema drift",
+      "health": {
+        "runs": 1,
+        "completed": false,
+        "correct": false
+      },
+      "verdict": "Breaks",
+      "heat": [
+        {
+          "state": "stop",
+          "label": "Failed"
+        },
+        {
+          "state": "stop",
+          "label": "None written"
+        },
+        {
+          "state": "ok",
+          "label": "Yes, run failed"
+        },
+        {
+          "state": "partial",
+          "label": "Broke original file"
+        },
+        {
+          "state": "na",
+          "label": "Not needed"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix",
+          "input": "Drift file",
+          "result": "54 rows, no country",
+          "file": "runs/schema_drop_column/run1.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix",
+          "input": "Baseline file",
+          "result": "Valid country column lost",
+          "file": "runs/schema_drop_column/after-restore.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Restored",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/schema_drop_column/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 19,
@@ -59,9 +135,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/schema_drop_column/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_drop_column\\run1.csv"
         ],
-        "validated_at": "2026-10-10T03:42:48+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -73,12 +149,71 @@
       "chatbot": "No, then yes after I named the rename",
       "severity": "High",
       "summary": "The chatbot did not find the renamed column until I described it.",
+      "group": "Schema drift",
+      "health": {
+        "runs": 1,
+        "completed": false,
+        "correct": false
+      },
+      "verdict": "Breaks",
+      "heat": [
+        {
+          "state": "stop",
+          "label": "Failed"
+        },
+        {
+          "state": "stop",
+          "label": "None written"
+        },
+        {
+          "state": "ok",
+          "label": "Yes, run failed"
+        },
+        {
+          "state": "fail",
+          "label": "Wrong data"
+        },
+        {
+          "state": "ok",
+          "label": "Fixed"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 1",
+          "input": "Drift file",
+          "result": "56 rows, no amount",
+          "file": "runs/schema_rename_column/run1.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 2",
+          "input": "Drift file",
+          "result": "Correct",
+          "file": "runs/schema_rename_column/run2-fixed.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Restored",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/schema_rename_column/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 16,
           "WARN": 1,
-          "FAIL": 3,
-          "SKIP": 3
+          "FAIL": 4,
+          "SKIP": 2
         },
         "verdict": "FAIL",
         "failed": [
@@ -89,6 +224,10 @@
           {
             "id": "output.rows",
             "message": "56 rows, expected 54; duplicates=[] invented=[] dropped_valid=[] kept_invalid=['1023', '1026']"
+          },
+          {
+            "id": "determinism",
+            "message": "runs differ in 56 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -99,9 +238,10 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/schema_rename_column/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_rename_column\\run1.csv",
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_rename_column\\run2-fixed.csv"
         ],
-        "validated_at": "2026-10-10T04:34:23+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -113,18 +253,81 @@
       "chatbot": "No (an empty file reached GCS), then yes after a hint",
       "severity": "High",
       "summary": "The first fix removed the crash, and an empty file was written to GCS.",
+      "group": "Schema drift",
+      "health": {
+        "runs": 1,
+        "completed": false,
+        "correct": false
+      },
+      "verdict": "Breaks",
+      "heat": [
+        {
+          "state": "stop",
+          "label": "Failed"
+        },
+        {
+          "state": "stop",
+          "label": "None written"
+        },
+        {
+          "state": "partial",
+          "label": "Misleading error"
+        },
+        {
+          "state": "fail",
+          "label": "Empty file"
+        },
+        {
+          "state": "ok",
+          "label": "Fixed"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 1",
+          "input": "Drift file",
+          "result": "Empty file",
+          "file": "runs/schema_type_change/run1.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 2",
+          "input": "Drift file",
+          "result": "Correct",
+          "file": "runs/schema_type_change/run2-fixed.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 2",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/schema_type_change/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 3,
           "WARN": 1,
-          "FAIL": 1,
-          "SKIP": 1
+          "FAIL": 2,
+          "SKIP": 0
         },
         "verdict": "FAIL",
         "failed": [
           {
             "id": "output.rows",
             "message": "output has no data rows"
+          },
+          {
+            "id": "determinism",
+            "message": "runs differ in 54 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -135,9 +338,10 @@
         ],
         "known_issue": false,
         "outputs": [
-          "runs/schema_type_change/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_type_change\\run1.csv",
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_type_change\\run2-fixed.csv"
         ],
-        "validated_at": "2026-10-10T05:21:54+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -149,6 +353,44 @@
       "chatbot": "Not needed",
       "severity": "Low",
       "summary": "Handled cleanly. The new column was dropped without any notice.",
+      "group": "Schema drift",
+      "health": {
+        "runs": 1,
+        "completed": true,
+        "correct": true
+      },
+      "verdict": "Handled",
+      "heat": [
+        {
+          "state": "ok",
+          "label": "Yes"
+        },
+        {
+          "state": "ok",
+          "label": "Correct"
+        },
+        {
+          "state": "partial",
+          "label": "New column dropped silently"
+        },
+        {
+          "state": "na",
+          "label": "Not needed"
+        },
+        {
+          "state": "na",
+          "label": "Not needed"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Correct",
+          "file": "runs/schema_add_column/run1.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 22,
@@ -166,9 +408,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/schema_add_column/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_add_column\\run1.csv"
         ],
-        "validated_at": "2026-10-10T05:41:48+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -180,6 +422,72 @@
       "chatbot": "No in two rounds, then yes after a hint",
       "severity": "High",
       "summary": "Ask Chatbot looped twice and blamed the scheduler before a hint fixed it.",
+      "group": "Combined drift",
+      "health": {
+        "runs": 1,
+        "completed": false,
+        "correct": false
+      },
+      "verdict": "Breaks",
+      "heat": [
+        {
+          "state": "stop",
+          "label": "Failed"
+        },
+        {
+          "state": "stop",
+          "label": "None written"
+        },
+        {
+          "state": "ok",
+          "label": "Yes, run failed"
+        },
+        {
+          "state": "stop",
+          "label": "Failed twice"
+        },
+        {
+          "state": "ok",
+          "label": "Fixed"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 1",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 2",
+          "input": "Drift file",
+          "result": "Run failed",
+          "file": null,
+          "runs": 1
+        },
+        {
+          "pipeline": "Hint fix",
+          "input": "Drift file",
+          "result": "Correct, country empty",
+          "file": "runs/schema_combined/run1-fixed.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Hint fix",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/schema_combined/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 20,
@@ -206,9 +514,9 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/schema_combined/run1-fixed.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\schema_combined\\run1-fixed.csv"
         ],
-        "validated_at": "2026-10-10T05:58:05+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -220,12 +528,71 @@
       "chatbot": "Yes after a hint, but it broke the original file",
       "severity": "High",
       "summary": "Amounts reached GCS 100x too large with a success status.",
+      "group": "Semantic drift",
+      "health": {
+        "runs": 1,
+        "completed": true,
+        "correct": false
+      },
+      "verdict": "Missed",
+      "heat": [
+        {
+          "state": "ok",
+          "label": "Yes"
+        },
+        {
+          "state": "fail",
+          "label": "Wrong, 100x"
+        },
+        {
+          "state": "fail",
+          "label": "No warning"
+        },
+        {
+          "state": "fail",
+          "label": "Missed it"
+        },
+        {
+          "state": "partial",
+          "label": "Broke original file"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "Amounts 100x too large",
+          "file": "runs/semantic_cents/run1.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Hint fix",
+          "input": "Drift file",
+          "result": "Correct",
+          "file": "runs/semantic_cents/run2-fixed.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Hint fix",
+          "input": "Baseline file",
+          "result": "Amounts 100x too small",
+          "file": "runs/semantic_cents/after-restore.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Restored",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/semantic_cents/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
           "PASS": 18,
           "WARN": 2,
-          "FAIL": 4,
-          "SKIP": 1
+          "FAIL": 5,
+          "SKIP": 0
         },
         "verdict": "FAIL",
         "failed": [
@@ -240,6 +607,10 @@
           {
             "id": "semantic.unit_price",
             "message": "54/54 implied unit prices outside $5..$250"
+          },
+          {
+            "id": "determinism",
+            "message": "runs differ in 54 cells/rows; see diff"
           }
         ],
         "warned": [
@@ -254,9 +625,10 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/semantic_cents/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_cents\\run1.csv",
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_cents\\run2-fixed.csv"
         ],
-        "validated_at": "2026-10-10T06:10:12+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     },
     {
@@ -268,12 +640,71 @@
       "chatbot": "No, two claimed fixes changed nothing",
       "severity": "Critical",
       "summary": "Day and month were swapped on 14 orders. The chatbot said the dates were correct.",
+      "group": "Semantic drift",
+      "health": {
+        "runs": 1,
+        "completed": true,
+        "correct": false
+      },
+      "verdict": "Missed",
+      "heat": [
+        {
+          "state": "ok",
+          "label": "Yes"
+        },
+        {
+          "state": "fail",
+          "label": "14 dates wrong"
+        },
+        {
+          "state": "fail",
+          "label": "No warning"
+        },
+        {
+          "state": "fail",
+          "label": "Said it was correct"
+        },
+        {
+          "state": "fail",
+          "label": "No change"
+        }
+      ],
+      "configs": [
+        {
+          "pipeline": "Original pipeline",
+          "input": "Drift file",
+          "result": "14 dates swapped",
+          "file": "runs/semantic_date_ddmm/run1.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 1",
+          "input": "Drift file",
+          "result": "Identical to the first run",
+          "file": "runs/semantic_date_ddmm/run2-claimed-fix.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Chatbot fix 2",
+          "input": "Drift file",
+          "result": "Identical to the first run",
+          "file": "runs/semantic_date_ddmm/run3-claimed-fix.csv",
+          "runs": 1
+        },
+        {
+          "pipeline": "Restored",
+          "input": "Baseline file",
+          "result": "Correct",
+          "file": "runs/semantic_date_ddmm/restored.csv",
+          "runs": 1
+        }
+      ],
       "validator": {
         "counts": {
-          "PASS": 20,
+          "PASS": 21,
           "WARN": 1,
           "FAIL": 3,
-          "SKIP": 1
+          "SKIP": 0
         },
         "verdict": "FAIL",
         "failed": [
@@ -294,9 +725,11 @@
         ],
         "known_issue": true,
         "outputs": [
-          "runs/semantic_date_ddmm/run1.csv"
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run1.csv",
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run2-claimed-fix.csv",
+          "C:\\Users\\Tanvir\\Documents\\Rhombus-AI\\runs\\semantic_date_ddmm\\run3-claimed-fix.csv"
         ],
-        "validated_at": "2026-10-10T06:28:30+00:00"
+        "validated_at": "2026-10-10T11:59:16+00:00"
       }
     }
   ],
@@ -326,5 +759,19 @@
     "orders_cleaned",
     "orders_output",
     "GCS destination"
+  ],
+  "seconds": {
+    "min": 15,
+    "max": 20,
+    "measured": {
+      "baseline": 17
+    }
+  },
+  "heat_columns": [
+    "Run completed",
+    "Output",
+    "Rhombus warned",
+    "AI fix, unprompted",
+    "AI fix, with hint"
   ]
 }

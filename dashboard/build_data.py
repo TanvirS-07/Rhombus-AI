@@ -80,6 +80,90 @@ TESTS = [
 ]
 
 
+# Run-level results for the bonus dashboard sections, written by hand from
+# observations/ and the output files kept in runs/. Only recorded runs count:
+# "runs" is how many times a setup was run, as recorded in the write-ups.
+# The baseline file gave a byte-identical output 5 times on the baseline
+# pipeline (observations/baseline.md). Run times were reported by the tester
+# as 15 to 20 seconds; only the first scheduled baseline run was timed (17 s).
+SECONDS = {"min": 15, "max": 20, "measured": {"baseline": 17}}
+
+# heat columns: completed, correct, surfaced, chatbot (no hint), chatbot (hint)
+# values: ok, partial, stop (failed loudly), fail (wrong data or missed), na. Each pair is (state, label).
+EXTRA = {
+    "baseline": {
+        "group": "Baseline", "runs": 5, "completed": True, "correct": True, "verdict": None, "heat": None,
+        "configs": [("Original pipeline", "Baseline file", "Correct", "runs/baseline/run1.csv", 5)],
+    },
+    "schema_drop_column": {
+        "group": "Schema drift", "completed": False, "correct": False, "verdict": "Breaks",
+        "heat": [("stop", "Failed"), ("stop", "None written"), ("ok", "Yes, run failed"), ("partial", "Broke original file"), ("na", "Not needed")],
+        "configs": [
+            ("Original pipeline", "Drift file", "Run failed", None, 1),
+            ("Chatbot fix", "Drift file", "54 rows, no country", "runs/schema_drop_column/run1.csv", 1),
+            ("Chatbot fix", "Baseline file", "Valid country column lost", "runs/schema_drop_column/after-restore.csv", 1),
+            ("Restored", "Baseline file", "Correct", "runs/schema_drop_column/restored.csv", 1),
+        ],
+    },
+    "schema_rename_column": {
+        "group": "Schema drift", "completed": False, "correct": False, "verdict": "Breaks",
+        "heat": [("stop", "Failed"), ("stop", "None written"), ("ok", "Yes, run failed"), ("fail", "Wrong data"), ("ok", "Fixed")],
+        "configs": [
+            ("Original pipeline", "Drift file", "Run failed", None, 1),
+            ("Chatbot fix 1", "Drift file", "56 rows, no amount", "runs/schema_rename_column/run1.csv", 1),
+            ("Chatbot fix 2", "Drift file", "Correct", "runs/schema_rename_column/run2-fixed.csv", 1),
+            ("Restored", "Baseline file", "Correct", "runs/schema_rename_column/restored.csv", 1),
+        ],
+    },
+    "schema_type_change": {
+        "group": "Schema drift", "completed": False, "correct": False, "verdict": "Breaks",
+        "heat": [("stop", "Failed"), ("stop", "None written"), ("partial", "Misleading error"), ("fail", "Empty file"), ("ok", "Fixed")],
+        "configs": [
+            ("Original pipeline", "Drift file", "Run failed", None, 1),
+            ("Chatbot fix 1", "Drift file", "Empty file", "runs/schema_type_change/run1.csv", 1),
+            ("Chatbot fix 2", "Drift file", "Correct", "runs/schema_type_change/run2-fixed.csv", 1),
+            ("Chatbot fix 2", "Baseline file", "Correct", "runs/schema_type_change/restored.csv", 1),
+        ],
+    },
+    "schema_add_column": {
+        "group": "Schema drift", "completed": True, "correct": True, "verdict": "Handled",
+        "heat": [("ok", "Yes"), ("ok", "Correct"), ("partial", "New column dropped silently"), ("na", "Not needed"), ("na", "Not needed")],
+        "configs": [("Original pipeline", "Drift file", "Correct", "runs/schema_add_column/run1.csv", 1)],
+    },
+    "schema_combined": {
+        "group": "Combined drift", "completed": False, "correct": False, "verdict": "Breaks",
+        "heat": [("stop", "Failed"), ("stop", "None written"), ("ok", "Yes, run failed"), ("stop", "Failed twice"), ("ok", "Fixed")],
+        "configs": [
+            ("Original pipeline", "Drift file", "Run failed", None, 1),
+            ("Chatbot fix 1", "Drift file", "Run failed", None, 1),
+            ("Chatbot fix 2", "Drift file", "Run failed", None, 1),
+            ("Hint fix", "Drift file", "Correct, country empty", "runs/schema_combined/run1-fixed.csv", 1),
+            ("Hint fix", "Baseline file", "Correct", "runs/schema_combined/restored.csv", 1),
+        ],
+    },
+    "semantic_cents": {
+        "group": "Semantic drift", "completed": True, "correct": False, "verdict": "Missed",
+        "heat": [("ok", "Yes"), ("fail", "Wrong, 100x"), ("fail", "No warning"), ("fail", "Missed it"), ("partial", "Broke original file")],
+        "configs": [
+            ("Original pipeline", "Drift file", "Amounts 100x too large", "runs/semantic_cents/run1.csv", 1),
+            ("Hint fix", "Drift file", "Correct", "runs/semantic_cents/run2-fixed.csv", 1),
+            ("Hint fix", "Baseline file", "Amounts 100x too small", "runs/semantic_cents/after-restore.csv", 1),
+            ("Restored", "Baseline file", "Correct", "runs/semantic_cents/restored.csv", 1),
+        ],
+    },
+    "semantic_date_ddmm": {
+        "group": "Semantic drift", "completed": True, "correct": False, "verdict": "Missed",
+        "heat": [("ok", "Yes"), ("fail", "14 dates wrong"), ("fail", "No warning"), ("fail", "Said it was correct"), ("fail", "No change")],
+        "configs": [
+            ("Original pipeline", "Drift file", "14 dates swapped", "runs/semantic_date_ddmm/run1.csv", 1),
+            ("Chatbot fix 1", "Drift file", "Identical to the first run", "runs/semantic_date_ddmm/run2-claimed-fix.csv", 1),
+            ("Chatbot fix 2", "Drift file", "Identical to the first run", "runs/semantic_date_ddmm/run3-claimed-fix.csv", 1),
+            ("Restored", "Baseline file", "Correct", "runs/semantic_date_ddmm/restored.csv", 1),
+        ],
+    },
+}
+
+
 FINDINGS = [
     {
         "title": "Dates were swapped silently and the fixes did nothing",
@@ -112,8 +196,14 @@ def main() -> None:
         checks = report["checks"]
         failed = [c for c in checks if c["status"] == "FAIL" and c["id"] != KNOWN_ISSUE]
         warned = [c for c in checks if c["status"] == "WARN"]
+        x = EXTRA[t["case"]]
         tests.append({
             **t,
+            "group": x["group"],
+            "health": {"runs": x.get("runs", 1), "completed": x["completed"], "correct": x["correct"]},
+            "verdict": x["verdict"],
+            "heat": [{"state": s, "label": l} for s, l in x["heat"]] if x["heat"] else None,
+            "configs": [{"pipeline": p, "input": i, "result": r, "file": f, "runs": n} for p, i, r, f, n in x["configs"]],
             "validator": {
                 "counts": report["summary"],
                 "verdict": report["verdict"],
@@ -130,6 +220,8 @@ def main() -> None:
         "tests": tests,
         "findings": FINDINGS,
         "pipeline": PIPELINE,
+        "seconds": SECONDS,
+        "heat_columns": ["Run completed", "Output", "Rhombus warned", "AI fix, unprompted", "AI fix, with hint"],
     }
     out = Path(__file__).resolve().parent / "data.json"
     out.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")

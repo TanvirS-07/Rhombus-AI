@@ -2,7 +2,7 @@
 
 This repository is my submission for the Rhombus AI Software Engineer Intern take-home. I built a cleaning pipeline in Rhombus AI that reads an orders file from S3 and writes the cleaned result to GCS, then tested how the pipeline, its logs and its chatbot behave when the source data changes.
 
-- Demo video: TODO
+- Demo video: [YouTube Video Link](https://youtu.be/Ub3u_5v1KGU)
 - Dashboard: https://tanvirs-07.github.io/Rhombus-AI/ (published from `dashboard/` by GitHub Pages)
 
 ## Repository structure
