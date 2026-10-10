@@ -1,0 +1,5 @@
+Prompt:
+/pipeline The source is back in dollars ($70.84) and the output now shows 0.71. Remove the divide-by-100 step so amount_usd is read as dollars again. Keep all other cleaning rules.
+
+Response:
+Done — the divide-by-100 step has been removed from orders_cleaned. $70.84 will now parse directly to 70.84 as before.

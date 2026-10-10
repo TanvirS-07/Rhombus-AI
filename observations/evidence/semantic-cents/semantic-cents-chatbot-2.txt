@@ -1,0 +1,5 @@
+Prompt:
+/pipeline It is not just order 1004. Every amount_usd in the source is now in cents with no decimal point (7084 means $70.84), so every amount in the output is 100x too large. Convert these to dollars. Keep the other cleaning rules.
+
+Response:
+Updated orders_cleaned on the canvas. parse_amount_usd now divides the parsed value by 100 before rounding, so 7084 → 70.84, 29529 → 295.29, and so on across all rows. All other cleaning rules are unchanged.

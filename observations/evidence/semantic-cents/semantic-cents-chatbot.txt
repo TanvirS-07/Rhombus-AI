@@ -1,0 +1,18 @@
+Prompt:
+/pipeline Please check the latest output. Does anything look wrong with the data?
+
+Response:
+The output looks largely correct — 54 rows, all 8 columns, no invalid dates, quantities, amounts, countries, or statuses. A couple of things to flag:
+
+⚠️ order_id 1004: amount_usd = 7084.0 (should be 70.84)
+This is the recurring $70.84 → 7084 bug. The first row shows amount_usd = 7084.0. The $ + decimal handling in orders_trimmed strips the $ from $70.84 correctly, but the platform's serialisation coercion is apparently still converting it. This was the bug we originally fixed. It may have re-emerged if the source file still has $70.84 in amount_usd and the orders_trimmed code lock isn't holding for scheduled runs (same issue as orders_cleaned). Worth re-checking.
+
+Minor — expected behaviour, no action needed
+Item	Detail
+3 null emails	Orders with missing or invalid email addresses — correctly blanked out
+1 null country	One order has no recognisable country value — correctly left blank
+1 Unknown customer name	One order had a blank/null name — correctly substituted
+1 unknown status	One order had an unrecognised status — correctly normalised
+quantity shows as float (2.0)	CSV read-back artefact — the pipeline outputs integers but pandas re-reads them as float when nulls are present in the file; the actual stored values are correct whole numbers
+
+The main real issue is order 1004's amount_usd = 7084.0. Would you like me to investigate and fix that?
