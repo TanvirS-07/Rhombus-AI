@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rhombus AI Drift Results</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1d1d1b; --muted: #5f5f5a; --border: #dcdcd6;
+    --pass: #2f7d4f; --warn: #b07a12; --fail: #b3362f; --skip: #8a8a84;
+    --critical: #8f1d17; --high: #b3362f; --medium: #b07a12; --low: #2f7d4f; --none: #5f5f5a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --panel: #1f1f1d; --text: #ecece8; --muted: #a3a39c; --border: #34342f;
+      --pass: #5bb37f; --warn: #d9a441; --fail: #e0665e; --skip: #8a8a84;
+      --critical: #ff8a80; --high: #e0665e; --medium: #d9a441; --low: #5bb37f; --none: #a3a39c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 32px 0 12px; }
+  p.lead { color: var(--muted); margin: 0 0 20px; }
+  a { color: inherit; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .card .n { font-size: 1.8rem; font-weight: 600; }
+  .card .l { color: var(--muted); font-size: .9rem; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .bar-row { display: grid; grid-template-columns: 190px 1fr; gap: 12px; align-items: center; margin: 8px 0; }
+  .bar-row .name { font-size: .9rem; }
+  .bar { display: flex; height: 22px; border-radius: 4px; overflow: hidden; background: var(--border); }
+  .bar span { display: block; height: 100%; color: #fff; font-size: .75rem; line-height: 22px; text-align: center; white-space: nowrap; overflow: hidden; }
+  .PASS { background: var(--pass); } .WARN { background: var(--warn); } .FAIL { background: var(--fail); } .SKIP { background: var(--skip); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  th { color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .sev { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: .8rem; border: 1.5px solid currentColor; }
+  .sev-Critical { color: var(--critical); } .sev-High { color: var(--high); } .sev-Medium { color: var(--medium); }
+  .sev-Low { color: var(--low); } .sev-None { color: var(--none); }
+  ul.checks { margin: 4px 0 0; padding-left: 18px; }
+  .muted { color: var(--muted); }
+  code { font-size: .85em; }
+  footer { margin-top: 28px; color: var(--muted); font-size: .85rem; }
+  @media (max-width: 640px) { .bar-row { grid-template-columns: 1fr; gap: 4px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Rhombus AI drift testing</h1>
+  <p class="lead">How an AI-built cleaning pipeline (S3 to GCS) handled schema and semantic changes to its source file, with the result of my own validator for every output.</p>
+
+  <div class="cards" id="cards"></div>
+
+  <h2>Validator checks per test</h2>
+  <div class="panel">
+    <div id="bars"></div>
+    <div class="legend">
+      <span><i class="PASS"></i>Pass</span><span><i class="WARN"></i>Warning</span>
+      <span><i class="FAIL"></i>Fail</span><span><i class="SKIP"></i>Skipped</span>
+    </div>
+    <p class="muted" id="known"></p>
+  </div>
+
+  <h2>Results</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Test</th><th>Pipeline stopped?</th><th>Chatbot fix worked?</th><th>What the validator caught</th><th>Severity</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer id="footer"></footer>
+</main>
+<script>
+const REPO = "https://github.com/TanvirS-07/Rhombus-AI/blob/main/";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+fetch("data.json").then(r => r.json()).then(render).catch(err => {
+  document.getElementById("rows").innerHTML =
+    `<tr><td colspan="5">Could not load data.json (${esc(err.message)}). Run <code>python dashboard/build_data.py</code>.</td></tr>`;
+});
+
+function render(data) {
+  const drift = data.tests.filter(t => t.kind !== "Baseline");
+  const count = s => drift.filter(t => t.severity === s).length;
+  const silent = drift.filter(t => t.stopped.startsWith("No,") && t.severity !== "Low").length;
+  const caught = drift.filter(t => t.validator.failed.length || t.validator.warned.length).length;
+  const cards = [
+    [drift.length, "drift tests run"],
+    [count("Critical"), "Critical"],
+    [count("High"), "High"],
+    [count("Low"), "Low"],
+    [silent, "wrong data written with a success status"],
+    [`${caught} of ${drift.length}`, "flagged by the validator"],
+  ];
+  document.getElementById("cards").innerHTML = cards.map(([n, l]) =>
+    `<div class="card"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`).join("");
+
+  document.getElementById("bars").innerHTML = data.tests.map(t => {
+    const c = t.validator.counts;
+    const total = ["PASS","WARN","FAIL","SKIP"].reduce((a, k) => a + (c[k] || 0), 0);
+    const segs = ["PASS","WARN","FAIL","SKIP"].filter(k => c[k]).map(k =>
+      `<span class="${k}" style="width:${(c[k] / total * 100).toFixed(1)}%" title="${k}: ${c[k]}">${c[k]}</span>`).join("");
+    const label = `${t.name}: ${c.PASS || 0} pass, ${c.WARN || 0} warning, ${c.FAIL || 0} fail, ${c.SKIP || 0} skipped`;
+    return `<div class="bar-row"><div class="name">${esc(t.name)}</div><div class="bar" role="img" aria-label="${esc(label)}">${segs}</div></div>`;
+  }).join("");
+  document.getElementById("known").textContent =
+    `Every output, including the correct baseline, fails one check: ${data.known_issue}. That check is left out of the findings below.`;
+
+  document.getElementById("rows").innerHTML = data.tests.map(t => {
+    const v = t.validator;
+    const items = [
+      ...v.failed.map(f => `<li>Fail: <code>${esc(f.id)}</code> ${esc(f.message)}</li>`),
+      ...v.warned.map(w => `<li>Warning: <code>${esc(w.id)}</code> ${esc(w.message)}</li>`),
+    ];
+    const caughtCell = items.length ? `<ul class="checks">${items.join("")}</ul>` : `<span class="muted">Nothing beyond the known quantity issue</span>`;
+    return `<tr>
+      <td><a href="${REPO}${esc(t.doc)}">${esc(t.name)}</a><div class="muted">${esc(t.kind)}. ${esc(t.summary)}</div></td>
+      <td>${esc(t.stopped)}</td>
+      <td>${esc(t.chatbot)}</td>
+      <td>${caughtCell}</td>
+      <td><span class="sev sev-${esc(t.severity)}">${esc(t.severity)}</span></td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("footer").innerHTML =
+    `Data built ${esc(data.generated_at)} from <code>data-validation/reports</code> by <code>dashboard/build_data.py</code>. ` +
+    `<a href="https://github.com/TanvirS-07/Rhombus-AI">Repository</a>`;
+}
+</script>
+</body>
+</html>

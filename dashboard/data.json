@@ -1,0 +1,303 @@
+{
+  "generated_at": "2026-10-10T07:13:42+00:00",
+  "known_issue": "quantity is written as 2.0 instead of 2",
+  "tests": [
+    {
+      "case": "baseline",
+      "name": "Baseline",
+      "kind": "Baseline",
+      "doc": "observations/baseline.md",
+      "stopped": "No",
+      "chatbot": "Correct after 6 outputs and 7 follow-ups",
+      "severity": "None",
+      "summary": "The correct pipeline output. Every earlier wrong output was reported as a success.",
+      "validator": {
+        "counts": {
+          "PASS": 23,
+          "WARN": 0,
+          "FAIL": 1,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [],
+        "warned": [],
+        "known_issue": true,
+        "outputs": [
+          "observations/evidence/baseline-output-6.csv"
+        ],
+        "validated_at": "2026-10-09T14:15:42+00:00"
+      }
+    },
+    {
+      "case": "schema_drop_column",
+      "name": "Drop column",
+      "kind": "Schema drift",
+      "doc": "observations/schema-drop-column.md",
+      "stopped": "Yes, failed",
+      "chatbot": "Only for the drifted file; it broke the original file",
+      "severity": "High",
+      "summary": "The run failed with a code dump. The fix only worked for the new file.",
+      "validator": {
+        "counts": {
+          "PASS": 19,
+          "WARN": 1,
+          "FAIL": 2,
+          "SKIP": 3
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "output.schema",
+            "message": "missing=['country'] unexpected=[]"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.schema",
+            "message": "schema drift: missing=['country'] added=[]"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/schema_drop_column/run1.csv"
+        ],
+        "validated_at": "2026-10-10T03:42:48+00:00"
+      }
+    },
+    {
+      "case": "schema_rename_column",
+      "name": "Rename column",
+      "kind": "Schema drift",
+      "doc": "observations/schema-rename-column.md",
+      "stopped": "Yes, failed",
+      "chatbot": "No, then yes after I named the rename",
+      "severity": "High",
+      "summary": "The chatbot did not find the renamed column until I described it.",
+      "validator": {
+        "counts": {
+          "PASS": 16,
+          "WARN": 1,
+          "FAIL": 3,
+          "SKIP": 3
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "output.schema",
+            "message": "missing=['amount_usd'] unexpected=[]"
+          },
+          {
+            "id": "output.rows",
+            "message": "56 rows, expected 54; duplicates=[] invented=[] dropped_valid=[] kept_invalid=['1023', '1026']"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.schema",
+            "message": "schema drift: missing=['amount_usd'] added=['total_amount'] likely renames={'amount_usd': 'total_amount'}"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/schema_rename_column/run1.csv"
+        ],
+        "validated_at": "2026-10-10T04:34:23+00:00"
+      }
+    },
+    {
+      "case": "schema_type_change",
+      "name": "Type change",
+      "kind": "Schema drift",
+      "doc": "observations/schema-type-change.md",
+      "stopped": "Yes, with a misleading error",
+      "chatbot": "No (an empty file reached GCS), then yes after a hint",
+      "severity": "High",
+      "summary": "The first fix removed the crash, and an empty file was written to GCS.",
+      "validator": {
+        "counts": {
+          "PASS": 3,
+          "WARN": 1,
+          "FAIL": 1,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "output.rows",
+            "message": "output has no data rows"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.types",
+            "message": "type drift: {'order_date': 'date -> epoch'}"
+          }
+        ],
+        "known_issue": false,
+        "outputs": [
+          "runs/schema_type_change/run1.csv"
+        ],
+        "validated_at": "2026-10-10T05:21:54+00:00"
+      }
+    },
+    {
+      "case": "schema_add_column",
+      "name": "Add column",
+      "kind": "Schema drift",
+      "doc": "observations/schema-add-column.md",
+      "stopped": "No, output correct",
+      "chatbot": "Not needed",
+      "severity": "Low",
+      "summary": "Handled cleanly. The new column was dropped without any notice.",
+      "validator": {
+        "counts": {
+          "PASS": 22,
+          "WARN": 1,
+          "FAIL": 1,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [],
+        "warned": [
+          {
+            "id": "input.schema",
+            "message": "schema drift: missing=[] added=['discount_code']"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/schema_add_column/run1.csv"
+        ],
+        "validated_at": "2026-10-10T05:41:48+00:00"
+      }
+    },
+    {
+      "case": "schema_combined",
+      "name": "Combined schema changes",
+      "kind": "Schema drift",
+      "doc": "observations/schema-combined.md",
+      "stopped": "Yes, failed",
+      "chatbot": "No in two rounds, then yes after a hint",
+      "severity": "High",
+      "summary": "Ask Chatbot looped twice and blamed the scheduler before a hint fixed it.",
+      "validator": {
+        "counts": {
+          "PASS": 20,
+          "WARN": 2,
+          "FAIL": 2,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "values.country",
+            "message": "53/54 rows differ from the reference"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.schema",
+            "message": "schema drift: missing=['country', 'amount_usd'] added=['discount_code', 'total_amount'] likely renames={'amount_usd': 'total_amount'}"
+          },
+          {
+            "id": "input.types",
+            "message": "type drift: {'order_date': 'date -> epoch'}"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/schema_combined/run1-fixed.csv"
+        ],
+        "validated_at": "2026-10-10T05:58:05+00:00"
+      }
+    },
+    {
+      "case": "semantic_cents",
+      "name": "Amounts in cents",
+      "kind": "Semantic drift",
+      "doc": "observations/semantic-cents.md",
+      "stopped": "No, wrong amounts written silently",
+      "chatbot": "Yes after a hint, but it broke the original file",
+      "severity": "High",
+      "summary": "Amounts reached GCS 100x too large with a success status.",
+      "validator": {
+        "counts": {
+          "PASS": 18,
+          "WARN": 2,
+          "FAIL": 4,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "values.amount_usd",
+            "message": "54/54 rows differ from the reference"
+          },
+          {
+            "id": "semantic.amount_scale",
+            "message": "median amount_usd = 19115.50 (expected 10..1000 dollars)"
+          },
+          {
+            "id": "semantic.unit_price",
+            "message": "54/54 implied unit prices outside $5..$250"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.types",
+            "message": "type drift: {'amount_usd': 'number -> integer'}"
+          },
+          {
+            "id": "input.amount_scale",
+            "message": "median amount_usd is 100.0x the baseline (dollars -> cents?)"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/semantic_cents/run1.csv"
+        ],
+        "validated_at": "2026-10-10T06:10:12+00:00"
+      }
+    },
+    {
+      "case": "semantic_date_ddmm",
+      "name": "Dates as DD/MM",
+      "kind": "Semantic drift",
+      "doc": "observations/semantic-date-ddmm.md",
+      "stopped": "No, 14 wrong dates written silently",
+      "chatbot": "No, two claimed fixes changed nothing",
+      "severity": "Critical",
+      "summary": "Day and month were swapped on 14 orders. The chatbot said the dates were correct.",
+      "validator": {
+        "counts": {
+          "PASS": 20,
+          "WARN": 1,
+          "FAIL": 3,
+          "SKIP": 1
+        },
+        "verdict": "FAIL",
+        "failed": [
+          {
+            "id": "values.order_date",
+            "message": "14/54 rows differ from the reference"
+          },
+          {
+            "id": "semantic.date_window",
+            "message": "13/54 dates outside 2025-01-01..2025-03-31; months seen [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]"
+          }
+        ],
+        "warned": [
+          {
+            "id": "input.date_order",
+            "message": "39 slash dates have a first part > 12 vs 1 with a second part > 12: dates look DD/MM"
+          }
+        ],
+        "known_issue": true,
+        "outputs": [
+          "runs/semantic_date_ddmm/run1.csv"
+        ],
+        "validated_at": "2026-10-10T06:28:30+00:00"
+      }
+    }
+  ]
+}
